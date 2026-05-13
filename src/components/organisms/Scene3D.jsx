@@ -148,6 +148,7 @@ export const Scene3D = ({
   groupRef,
   materialColor,
   baseColor,
+  handleColor,
   baseShape: selectedShape,
   textScale,
   textOffset,
@@ -582,20 +583,20 @@ export const Scene3D = ({
           <group position={[baseCenterX, -handleHeight / 2, baseCenterZ]}>
             <mesh name="StampHandle">
               <cylinderGeometry args={[handleRadius * 0.8, handleRadius, handleHeight, 32]} />
-              <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
+              <meshStandardMaterial color={handleColor || '#334155'} roughness={0.8} />
             </mesh>
             {isHandleRemovable && (
               <group position={[0, handleHeight/2, 0]}>
                 {/* Pin Base */}
                 <mesh position={[0, 1.5, 0]}>
                   <cylinderGeometry args={[3.8, 3.8, 3.5, 32]} />
-                  <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
+                  <meshStandardMaterial color={handleColor || '#334155'} roughness={0.8} />
                 </mesh>
                 {/* Helical Threads (Visual) */}
                 {Array.from({ length: 5 }).map((_, i) => (
                   <mesh key={i} position={[0, 0.5 + i * 0.6, 0]} rotation={[0.08, 0, 0.05]}>
                     <torusGeometry args={[3.8, 0.25, 8, 32]} />
-                    <meshStandardMaterial color={baseColor || '#334155'} roughness={0.4} metalness={0.2} />
+                    <meshStandardMaterial color={handleColor || '#334155'} roughness={0.4} metalness={0.2} />
                   </mesh>
                 ))}
               </group>

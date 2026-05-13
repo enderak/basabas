@@ -18,6 +18,7 @@ const App = () => {
   const [textDepth, setTextDepth] = useState(2.0); // Yazı kalınlığı (mm)
   const [materialColor, setMaterialColor] = useState('#22C55E'); // Yazı Rengi
   const [baseColor, setBaseColor] = useState('#0F172A'); // Taban Rengi
+  const [handleColor, setHandleColor] = useState('#334155'); // Sap Rengi
   const [baseShape, setBaseShape] = useState('circle'); // Taban Şekli
   const [targetWidth, setTargetWidth] = useState(0); // OTO
   const [textScale, setTextScale] = useState(100); // Yazı Boyutu (%)
@@ -111,6 +112,8 @@ const App = () => {
             setMaterialColor={setMaterialColor}
             baseColor={baseColor}
             setBaseColor={setBaseColor}
+            handleColor={handleColor}
+            setHandleColor={setHandleColor}
             baseShape={baseShape}
             setBaseShape={setBaseShape}
             textScale={textScale}
@@ -194,6 +197,7 @@ const App = () => {
                 groupRef={groupRef}
                 materialColor={materialColor}
                 baseColor={baseColor}
+                handleColor={handleColor}
                 baseShape={baseShape}
                 textScale={textScale}
                 iconScale={iconScale}
