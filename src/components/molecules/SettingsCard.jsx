@@ -26,6 +26,10 @@ export const SettingsCard = ({
   autoCenter, setAutoCenter,
   baseHeight, setBaseHeight,
   targetWidth, setTargetWidth,
+  appMode, setAppMode,
+  isMirrored, setIsMirrored,
+  handleHeight, setHandleHeight,
+  handleRadius, setHandleRadius,
   onExport 
 }) => {
   const { t, i18n } = useTranslation();
@@ -68,6 +72,29 @@ export const SettingsCard = ({
               {lang.code}
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* MOD SEÇİMİ (APP MODE) */}
+      <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
+        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('app_mode')}</label>
+        <div className="bg-slate-100/80 p-1 rounded-xl flex items-center h-12 w-full relative">
+          <button 
+            onClick={() => setAppMode('keychain')}
+            className={`z-10 flex-1 flex flex-col items-center justify-center rounded-lg h-full transition-all ${
+              appMode === 'keychain' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
+            }`}
+          >
+            <span className="text-[10px] font-black uppercase tracking-tight leading-none">🔑 {t('mode_keychain')}</span>
+          </button>
+          <button 
+            onClick={() => setAppMode('stamp')}
+            className={`z-10 flex-1 flex flex-col items-center justify-center rounded-lg h-full transition-all ${
+              appMode === 'stamp' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
+            }`}
+          >
+            <span className="text-[10px] font-black uppercase tracking-tight leading-none">🧼 {t('mode_stamp')}</span>
+          </button>
         </div>
       </div>
 
@@ -187,10 +214,23 @@ export const SettingsCard = ({
                 isItalic ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
-              {t('italic')}
             </button>
           </div>
         </div>
+
+        {/* AYNALAMA (MIRROR) - Sadece Stamp modunda veya isteğe bağlı */}
+        <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100/80 transition-colors mt-1">
+          <div className="relative flex items-center">
+            <input 
+              type="checkbox" 
+              checked={isMirrored}
+              onChange={(e) => setIsMirrored(e.target.checked)}
+              className="peer sr-only"
+            />
+            <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+          </div>
+          <span className="text-xs font-bold text-emerald-800">{t('is_mirrored')}</span>
+        </label>
 
         {/* SİMGE (ICON) SEÇİMİ VE KONUMU */}
         <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
@@ -368,6 +408,14 @@ export const SettingsCard = ({
               ❤️
             </button>
             <button 
+              onClick={() => setBaseShape('circle')}
+              className={`z-10 flex-1 text-[10px] sm:text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
+                baseShape === 'circle' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              {t('shape_circle')}
+            </button>
+            <button 
               onClick={() => setBaseShape('contour')}
               className={`z-10 flex-1 text-[10px] sm:text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
                 baseShape === 'contour' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
@@ -379,32 +427,69 @@ export const SettingsCard = ({
         </div>
 
 
-        {/* Delik Konumu */}
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('hole_position')}</label>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { id: 'top_left', label: 'hole_top_left' },
-              { id: 'center_left', label: 'hole_center_left' },
-              { id: 'bottom_left', label: 'hole_bottom_left' },
-              { id: 'top_right', label: 'hole_top_right' },
-              { id: 'center_right', label: 'hole_center_right' },
-              { id: 'bottom_right', label: 'hole_bottom_right' }
-            ].map(pos => (
-              <button
-                key={pos.id}
-                onClick={() => setHolePosition(pos.id)}
-                className={`py-2 px-3 text-[11px] font-bold rounded-xl transition-all border ${
-                  holePosition === pos.id 
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm' 
-                    : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                }`}
-              >
-                {t(pos.label)}
-              </button>
-            ))}
+        {/* Delik Konumu - Sadece Keychain modunda göster */}
+        {appMode === 'keychain' && (
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('hole_position')}</label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { id: 'top_left', label: 'hole_top_left' },
+                { id: 'center_left', label: 'hole_center_left' },
+                { id: 'bottom_left', label: 'hole_bottom_left' },
+                { id: 'top_right', label: 'hole_top_right' },
+                { id: 'center_right', label: 'hole_center_right' },
+                { id: 'bottom_right', label: 'hole_bottom_right' }
+              ].map(pos => (
+                <button
+                  key={pos.id}
+                  onClick={() => setHolePosition(pos.id)}
+                  className={`py-2 px-3 text-[11px] font-bold rounded-xl transition-all border ${
+                    holePosition === pos.id 
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm' 
+                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  {t(pos.label)}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* TUTAMAK AYARLARI - Sadece Stamp modunda göster */}
+        {appMode === 'stamp' && (
+          <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('handle_settings')}</label>
+            
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                <span>{t('handle_height')}</span>
+                <span>{handleHeight.toFixed(0)}mm</span>
+              </div>
+              <input 
+                type="range" 
+                min="10" max="60" step="1"
+                value={handleHeight}
+                onChange={(e) => setHandleHeight(parseFloat(e.target.value))}
+                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+              />
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                <span>{t('handle_radius')}</span>
+                <span>{handleRadius.toFixed(0)}mm</span>
+              </div>
+              <input 
+                type="range" 
+                min="5" max="25" step="1"
+                value={handleRadius}
+                onChange={(e) => setHandleRadius(parseFloat(e.target.value))}
+                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Yazı Boyutu (Scale) */}
         <div className="flex flex-col gap-3">

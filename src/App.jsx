@@ -28,6 +28,10 @@ const App = () => {
   const [textOffset, setTextOffset] = useState(0);
   const [autoCenter, setAutoCenter] = useState(true);
   const [baseHeight, setBaseHeight] = useState(3.0); // İnce taban (anahtarlık)
+  const [appMode, setAppMode] = useState('keychain'); // keychain, stamp
+  const [isMirrored, setIsMirrored] = useState(false); // Aynalama (mühür için)
+  const [handleHeight, setHandleHeight] = useState(30.0); // Tutamak yüksekliği
+  const [handleRadius, setHandleRadius] = useState(12.0); // Tutamak çapı
   const groupRef = useRef();
   const { t, i18n } = useTranslation();
 
@@ -128,6 +132,27 @@ const App = () => {
             setBaseHeight={setBaseHeight}
             targetWidth={targetWidth}
             setTargetWidth={setTargetWidth}
+            appMode={appMode}
+            setAppMode={(mode) => {
+              setAppMode(mode);
+              if (mode === 'stamp') {
+                setIsMirrored(true);
+                setBaseHeight(5.0);
+                setBaseShape('circle');
+                setHolePosition('none');
+              } else {
+                setIsMirrored(false);
+                setBaseHeight(3.0);
+                setBaseShape('rectangle');
+                setHolePosition('top_left');
+              }
+            }}
+            isMirrored={isMirrored}
+            setIsMirrored={setIsMirrored}
+            handleHeight={handleHeight}
+            setHandleHeight={setHandleHeight}
+            handleRadius={handleRadius}
+            setHandleRadius={setHandleRadius}
             onExport={(isMultiColor) => handleExport(groupRef, text, isMultiColor)}
           />
 
@@ -195,6 +220,10 @@ const App = () => {
                 autoCenter={autoCenter}
                 baseHeight={baseHeight}
                 targetWidth={targetWidth}
+                appMode={appMode}
+                isMirrored={isMirrored}
+                handleHeight={handleHeight}
+                handleRadius={handleRadius}
               />
             </Canvas>
           </div>

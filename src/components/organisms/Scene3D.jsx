@@ -120,6 +120,20 @@ const createHeartBaseShape = (width, depth, holeConfig) => {
   return shape;
 };
 
+// Daire taban şekli
+const createCircleBaseShape = (width, depth, holeConfig) => {
+  const shape = new THREE.Shape();
+  const radius = Math.max(width, depth) / 2;
+  shape.absarc(0, 0, radius, 0, Math.PI * 2, false);
+  
+  if (holeConfig) {
+    const holePath = new THREE.Path();
+    holePath.absarc(holeConfig.x, holeConfig.y, holeConfig.r, 0, Math.PI * 2, true);
+    shape.holes.push(holePath);
+  }
+  return shape;
+};
+
 export const Scene3D = ({
   text,
   subText,
@@ -142,7 +156,11 @@ export const Scene3D = ({
   autoCenter,
   baseHeight,
   targetWidth,
-  iconScale: customIconScale = 100
+  iconScale: customIconScale = 100,
+  appMode = 'keychain',
+  isMirrored = false,
+  handleHeight = 30.0,
+  handleRadius = 12.0
 }) => {
   const [textSizeMain, setTextSizeMain] = useState([60, 20, 6]);
   const [textSizeSub, setTextSizeSub] = useState([0, 0, 0]);
@@ -369,6 +387,8 @@ export const Scene3D = ({
       return createHeartBaseShape(baseW, baseD, { x: holeX, y: holeZ, r: holeR });
     } else if (selectedShape === 'teardrop') {
       return createTeardropShape(baseW, baseD, isLeft, { x: holeX, y: holeZ, r: holeR });
+    } else if (selectedShape === 'circle') {
+      return createCircleBaseShape(baseW, baseD, holePosition !== 'none' ? { x: holeX, y: holeZ, r: holeR } : null);
     } else {
       return createRoundedRectShape(
         baseW, 
@@ -463,12 +483,52 @@ export const Scene3D = ({
 
       <group scale={[SCALE, SCALE, SCALE]} position={[0, -0.5, zCenterOffset * SCALE]}>
         <group ref={groupRef} scale={[innerScale, innerScale, innerScale]}>
+          {/* TABAN PLAKASI */}
+          <mesh 
+            name="BasePlate" 
+            position={[baseCenterX, 0, baseCenterZ]} 
+            rotation={[-Math.PI / 2, 0, 0]}
+            receiveShadow
+          >
+            <extrudeGeometry args={[baseShape, { depth: baseH, bevelEnabled: false }]} />
+            <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
+          </mesh>
 
+          {/* DEKORATİF ÇERÇEVE (RIM) - Sadece Stamp modunda ve Daire şeklinde */}
+          {appMode === 'stamp' && selectedShape === 'circle' && (
+            <mesh 
+              name="StampRim" 
+              position={[baseCenterX, baseH, baseCenterZ]} 
+              rotation={[-Math.PI / 2, 0, 0]}
+            >
+              <torusGeometry args={[Math.max(baseW, baseD) / 2 - 1.5, 0.8, 16, 100]} />
+              <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+            </mesh>
+          )}
+
+          {/* TUTAMAK (HANDLE) - Sadece Stamp modunda */}
+          {appMode === 'stamp' && (
+            <mesh 
+              name="StampHandle" 
+              position={[baseCenterX, -handleHeight / 2, baseCenterZ]} 
+              rotation={[0, 0, 0]}
+            >
+              <cylinderGeometry args={[handleRadius * 0.8, handleRadius, handleHeight, 32]} />
+              <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
+            </mesh>
+          )}
+
+          {/* ANA İÇERİK GRUBU (YAZI VE İKONLAR) - AYNALAMA BURADA UYGULANIYOR */}
+          <group 
+            name="ContentMirrorGroup"
+            scale={[isMirrored ? -1 : 1, 1, 1]}
+            position={[0, 0, 0]}
+          >
           {/* ANA METİN */}
           {text && text.trim().length > 0 && (
             <Text3D
               name="TextMain"
-              key={`main-${text}-${textDepth}-${baseHeight}-${scaleRatio}-${hasSubText}-${isItalic}-${fontFamily}-${hasIcon}`}
+              key={`main-${text}-${textDepth}-${baseHeight}-${scaleRatio}-${hasSubText}-${isItalic}-${fontFamily}-${hasIcon}-${isMirrored}`}
               font={fontPath}
               size={letterSize}
               height={textDepth} // textDepth kullanılıyor
@@ -485,7 +545,7 @@ export const Scene3D = ({
           {hasSubText && (
             <Text3D
               name="TextSub"
-              key={`sub-${subText}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${fontFamily}-${hasIcon}`}
+              key={`sub-${subText}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${fontFamily}-${hasIcon}-${isMirrored}`}
               font={fontPath}
               size={letterSize}
               height={textDepth} 
@@ -520,7 +580,7 @@ export const Scene3D = ({
           {/* I LOVE TITLE (Extra) */}
           {isILoveMode && iLoveShape && (
             <group 
-              key={`ilove-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${letterSize}`}
+              key={`ilove-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${letterSize}-${isMirrored}`}
               name="ILoveGroup"
               position={[iLoveX, baseH, iLoveZ]}
               rotation={[-Math.PI / 2, 0, 0]}
@@ -539,7 +599,7 @@ export const Scene3D = ({
           {hasIcon && (
             Array.isArray(iconShape) ? (
               <group
-                key={`icon-${iconType}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${iconPosition}-${letterSize}`}
+                key={`icon-${iconType}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${iconPosition}-${letterSize}-${isMirrored}`}
                 name="TextIconGroup"
                 position={[iconX, baseH, iconZ]}
                 rotation={[-Math.PI / 2, 0, 0]}
@@ -554,7 +614,7 @@ export const Scene3D = ({
               </group>
             ) : (
               <mesh 
-                key={`icon-${iconType}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${iconPosition}-${letterSize}`}
+                key={`icon-${iconType}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${iconPosition}-${letterSize}-${isMirrored}`}
                 name="TextIcon"
                 position={[iconX, baseH, iconZ]}
                 rotation={[-Math.PI / 2, 0, 0]}
@@ -565,18 +625,7 @@ export const Scene3D = ({
               </mesh>
             )
           )}
-
-          {/* TABAN PLAKASI */}
-          <mesh 
-            name="BasePlate" 
-            position={[baseCenterX, 0, baseCenterZ]} 
-            rotation={[-Math.PI / 2, 0, 0]}
-            receiveShadow
-          >
-            <extrudeGeometry args={[baseShape, { depth: baseH, bevelEnabled: false }]} />
-            <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
-          </mesh>
-
+          </group>
         </group>
 
         {/* ZEMİN GÖLGE DÜZLEMI */}
