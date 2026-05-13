@@ -29,6 +29,7 @@ export const SettingsCard = ({
   handleRadius, setHandleRadius,
   rimType, setRimType,
   iconDepth, setIconDepth,
+  isHandleRemovable, setIsHandleRemovable,
   onExport 
 }) => {
   const { t, i18n } = useTranslation();
@@ -203,6 +204,25 @@ export const SettingsCard = ({
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
               </div>
+            </div>
+
+            {/* Sökülebilir Sap Toggle */}
+            <div className="pt-2">
+              <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100 transition-colors">
+                <div className="relative flex items-center">
+                  <input 
+                    type="checkbox" 
+                    checked={isHandleRemovable}
+                    onChange={(e) => setIsHandleRemovable(e.target.checked)}
+                    className="peer sr-only"
+                  />
+                  <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-emerald-900">{t('handle_removable')}</span>
+                  <span className="text-[9px] text-emerald-700/70 leading-none">{t('handle_removable_desc')}</span>
+                </div>
+              </label>
             </div>
           </div>
 

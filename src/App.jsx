@@ -30,6 +30,7 @@ const App = () => {
   const [handleRadius, setHandleRadius] = useState(12.0); // Tutamak çapı
   const [rimType, setRimType] = useState('simple'); // simple, double, dotted, scalloped, none
   const [iconDepth, setIconDepth] = useState(2.0); // Simge derinliği
+  const [isHandleRemovable, setIsHandleRemovable] = useState(false); // Sökülebilir sap
   const groupRef = useRef();
   const { t, i18n } = useTranslation();
 
@@ -134,6 +135,8 @@ const App = () => {
             setRimType={setRimType}
             iconDepth={iconDepth}
             setIconDepth={setIconDepth}
+            isHandleRemovable={isHandleRemovable}
+            setIsHandleRemovable={setIsHandleRemovable}
             onExport={(isMultiColor) => handleExport(groupRef, text, isMultiColor)}
           />
 
@@ -203,6 +206,7 @@ const App = () => {
                 handleRadius={handleRadius}
                 rimType={rimType}
                 iconDepth={iconDepth}
+                isHandleRemovable={isHandleRemovable}
               />
             </Canvas>
           </div>

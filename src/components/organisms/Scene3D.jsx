@@ -159,7 +159,8 @@ export const Scene3D = ({
   handleHeight = 30.0,
   handleRadius = 12.0,
   rimType = 'simple',
-  iconDepth = 2.0
+  iconDepth = 2.0,
+  isHandleRemovable = false
 }) => {
   const [textSizeMain, setTextSizeMain] = useState([60, 20, 6]);
   const [textSizeSub, setTextSizeSub] = useState([0, 0, 0]);
@@ -386,17 +387,18 @@ export const Scene3D = ({
 
   // Taban şekli seçimi
   const baseShape = useMemo(() => {
+    const holeConfig = isHandleRemovable ? { x: 0, y: 0, r: 4.0 } : null; // 8mm connection hole
     if (selectedShape === 'circle') {
-      return createCircleBaseShape(baseW, baseD, null);
+      return createCircleBaseShape(baseW, baseD, holeConfig);
     } else {
       return createRoundedRectShape(
         baseW, 
         baseD, 
         Math.min(5, baseW/2, baseD/2), 
-        null
+        holeConfig
       );
     }
-  }, [selectedShape, baseW, baseD, isLeft, holeX, holeZ, holeR]);
+  }, [selectedShape, baseW, baseD, isHandleRemovable]);
 
 
 
@@ -553,14 +555,18 @@ export const Scene3D = ({
 
 
           {/* TUTAMAK (HANDLE) */}
-          <mesh 
-            name="StampHandle" 
-            position={[baseCenterX, -handleHeight / 2, baseCenterZ]} 
-            rotation={[0, 0, 0]}
-          >
-            <cylinderGeometry args={[handleRadius * 0.8, handleRadius, handleHeight, 32]} />
-            <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
-          </mesh>
+          <group position={[baseCenterX, -handleHeight / 2, baseCenterZ]}>
+            <mesh name="StampHandle">
+              <cylinderGeometry args={[handleRadius * 0.8, handleRadius, handleHeight, 32]} />
+              <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
+            </mesh>
+            {isHandleRemovable && (
+              <mesh position={[0, handleHeight/2 + 2.5, 0]}>
+                <cylinderGeometry args={[3.8, 3.8, 5, 32]} />
+                <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
+              </mesh>
+            )}
+          </group>
 
           {/* ANA İÇERİK GRUBU (YAZI VE İKONLAR) - AYNALAMA BURADA UYGULANIYOR */}
           <group 
