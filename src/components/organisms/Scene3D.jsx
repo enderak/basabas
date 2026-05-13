@@ -193,6 +193,7 @@ export const Scene3D = ({
   const phoneLetterSize = 18.0 * scaleRatio; // Telefon numarası daha küçük olsun
   const baseH = baseHeight;        
 
+  const hasMidText = midText && midText.trim().length > 0;
   const hasSubText = subText && subText.trim().length > 0;
   const hasPhoneText = phoneText && phoneText.trim().length > 0;
   
@@ -294,6 +295,8 @@ export const Scene3D = ({
   const hasIcon = iconShape !== null;
   const iconSpacing = 8.0; // Spacing increased from 2.0 to 8.0
   const iconRealSize = hasIcon ? (letterSize * iconScale) : 0;
+
+
 
   // VERTICAL LAYOUT (Z-axis in 3D)
   const lineSpacing = letterSize * 1.3;
