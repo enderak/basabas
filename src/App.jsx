@@ -11,7 +11,6 @@ const App = () => {
   const [subText, setSubText] = useState(''); // Alt Metin
   const [phoneText, setPhoneText] = useState(''); // Arka Yüz Metni
   const [phoneDepth, setPhoneDepth] = useState(0.6); // Arka Yüz Oyma Derinliği
-  const [isILoveMode, setIsILoveMode] = useState(false); // I Love Formatı
   const [isItalic, setIsItalic] = useState(false); // İtalik Yazı
   const [fontFamily, setFontFamily] = useState('droid'); // optimer, helvetiker, droid
   const [iconType, setIconType] = useState('none'); // none, clover, star_crescent, skull, heart, custom
@@ -98,8 +97,6 @@ const App = () => {
             setPhoneText={setPhoneText}
             phoneDepth={phoneDepth}
             setPhoneDepth={setPhoneDepth}
-            isILoveMode={isILoveMode}
-            setIsILoveMode={setIsILoveMode}
             fontFamily={fontFamily}
             setFontFamily={setFontFamily}
             iconType={iconType}
@@ -189,7 +186,6 @@ const App = () => {
                 subText={subText}
                 phoneText={phoneText}
                 phoneDepth={phoneDepth}
-                isILoveMode={isILoveMode}
                 fontFamily={fontFamily}
                 iconType={iconType}
                 customSvgUrl={customSvgUrl}

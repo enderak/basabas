@@ -8,7 +8,6 @@ export const SettingsCard = ({
   subText, setSubText,
   phoneText, setPhoneText,
   phoneDepth, setPhoneDepth,
-  isILoveMode, setIsILoveMode,
   fontFamily, setFontFamily,
   iconType, setIconType,
   customSvgUrl, setCustomSvgUrl,
@@ -387,36 +386,12 @@ export const SettingsCard = ({
               {t('shape_rectangle')}
             </button>
             <button 
-              onClick={() => setBaseShape('teardrop')}
-              className={`z-10 flex-1 text-[10px] sm:text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
-                baseShape === 'teardrop' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              {t('shape_teardrop')}
-            </button>
-            <button 
-              onClick={() => setBaseShape('heart')}
-              className={`z-10 flex-1 text-[10px] sm:text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
-                baseShape === 'heart' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              ❤️
-            </button>
-            <button 
               onClick={() => setBaseShape('circle')}
               className={`z-10 flex-1 text-[10px] sm:text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
                 baseShape === 'circle' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
               {t('shape_circle')}
-            </button>
-            <button 
-              onClick={() => setBaseShape('contour')}
-              className={`z-10 flex-1 text-[10px] sm:text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
-                baseShape === 'contour' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              {t('shape_contour')}
             </button>
           </div>
         </div>
@@ -435,6 +410,9 @@ export const SettingsCard = ({
             <option value="double">{t('rim_double')}</option>
             <option value="dotted">{t('rim_dotted')}</option>
             <option value="scalloped">{t('rim_scalloped')}</option>
+            <option value="greek">{t('rim_greek')}</option>
+            <option value="zigzag">{t('rim_zigzag')}</option>
+            <option value="wave">{t('rim_wave')}</option>
           </select>
         </div>
 

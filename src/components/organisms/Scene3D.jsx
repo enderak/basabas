@@ -140,7 +140,6 @@ export const Scene3D = ({
   subText,
   phoneText,
   phoneDepth,
-  isILoveMode,
   fontFamily,
   iconType,
   customSvgUrl,
@@ -292,25 +291,13 @@ export const Scene3D = ({
   const iconSpacing = 2.0;
   const iconRealSize = hasIcon ? (letterSize * iconScale) : 0;
 
-  const iLoveShape = useMemo(() => isILoveMode ? createIconShape('i_love', letterSize) : null, [isILoveMode, letterSize]);
-
-  // VERTICAL LAYOUT (Z-axis in 3D)
-  const lineSpacing = letterSize * 1.3;
-  let currentZ = 0;
-  
   let iconZ = 0;
-  let iLoveZ = 0;
   let textMainZ = 0;
   let textSubZ = 0;
 
   if (hasIcon && iconPosition === 'top') {
     iconZ = currentZ + iconRealSize / 2;
     currentZ += iconRealSize + iconSpacing;
-  }
-
-  if (isILoveMode) {
-    iLoveZ = currentZ + letterSize / 2;
-    currentZ += letterSize + iconSpacing;
   }
 
   textMainZ = currentZ + letterSize / 2;
@@ -330,7 +317,6 @@ export const Scene3D = ({
   }
 
   iconZ += zOffset;
-  iLoveZ += zOffset;
   textMainZ += zOffset;
   textSubZ += zOffset;
 
@@ -343,9 +329,7 @@ export const Scene3D = ({
   const pBottom = 12.0;
 
   const maxTextWidth = Math.max(textSizeMain[0], textSizeSub[0]);
-  const iLoveWidth = isILoveMode ? (letterSize * 0.85) : 0;
-  
-  const textBlockWidth = Math.max(maxTextWidth, iLoveWidth);
+  const textBlockWidth = maxTextWidth;
   let actualContentW = textBlockWidth;
   
   if (hasIcon) {
@@ -403,39 +387,14 @@ export const Scene3D = ({
 
   // Taban şekli seçimi
   const baseShape = useMemo(() => {
-    if (selectedShape === 'contour' && loadedFont) {
-      return createContourBaseShape({
-        font: loadedFont,
-        text,
-        subText,
-        hasSubText,
-        letterSize,
-        isItalic,
-        iconShape,
-        iconX: iconX,
-        iconScale,
-        textShiftX: textX,
-        mainYOffset: -textMainZ,
-        subYOffset: -textSubZ,
-        iconYOffset: -iconZ,
-        extraShapes: isILoveMode && iLoveShape ? [
-          { shape: iLoveShape, x: iLoveX, y: -iLoveZ, scale: 1.0 }
-        ] : [],
-        holeConfig: { x: holeX, y: holeZ, r: holeR },
-        offsetRadius: 5.0 // 5mm contour padding
-      });
-    } else if (selectedShape === 'heart') {
-      return createHeartBaseShape(baseW, baseD, { x: holeX, y: holeZ, r: holeR });
-    } else if (selectedShape === 'teardrop') {
-      return createTeardropShape(baseW, baseD, isLeft, { x: holeX, y: holeZ, r: holeR });
-    } else if (selectedShape === 'circle') {
+    if (selectedShape === 'circle') {
       return createCircleBaseShape(baseW, baseD, null);
     } else {
       return createRoundedRectShape(
         baseW, 
         baseD, 
         Math.min(5, baseW/2, baseD/2), 
-        { x: holeX, y: holeZ, r: holeR }
+        null
       );
     }
   }, [selectedShape, baseW, baseD, isLeft, holeX, holeZ, holeR]);
@@ -575,6 +534,38 @@ export const Scene3D = ({
                   return (
                     <mesh key={i} position={[Math.cos(angle) * r, Math.sin(angle) * r, 0]}>
                       <cylinderGeometry args={[2.5, 2.5, 1.2, 32]} />
+                      <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                    </mesh>
+                  );
+                })
+              )}
+              {rimType === 'greek' && (
+                <mesh rotation={[0, 0, 0]}>
+                  <torusGeometry args={[Math.max(baseW, baseD) / 2 - 2, 1.2, 16, 100]} />
+                  <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                </mesh>
+              )}
+              {rimType === 'zigzag' && (
+                Array.from({ length: 48 }).map((_, i) => {
+                  const angle = (i / 48) * Math.PI * 2;
+                  const r = Math.max(baseW, baseD) / 2 - 1.5;
+                  const offset = i % 2 === 0 ? 1 : -1;
+                  return (
+                    <mesh key={i} position={[Math.cos(angle) * (r + offset), Math.sin(angle) * (r + offset), 0]}>
+                      <boxGeometry args={[1.5, 1.5, 1.5]} />
+                      <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                    </mesh>
+                  );
+                })
+              )}
+              {rimType === 'wave' && (
+                Array.from({ length: 60 }).map((_, i) => {
+                  const angle = (i / 60) * Math.PI * 2;
+                  const r = Math.max(baseW, baseD) / 2 - 1.5;
+                  const z = Math.sin(angle * 10) * 1.0;
+                  return (
+                    <mesh key={i} position={[Math.cos(angle) * r, Math.sin(angle) * r, z]}>
+                      <sphereGeometry args={[0.8, 16, 16]} />
                       <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                     </mesh>
                   );
