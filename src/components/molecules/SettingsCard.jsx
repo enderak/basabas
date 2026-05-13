@@ -7,7 +7,6 @@ export const SettingsCard = ({
   text, setText, 
   subText, setSubText,
   phoneText, setPhoneText,
-  phoneDepth, setPhoneDepth,
   fontFamily, setFontFamily,
   iconType, setIconType,
   customSvgUrl, setCustomSvgUrl,
@@ -117,30 +116,7 @@ export const SettingsCard = ({
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500">{t('phone_text')}</label>
-          <input 
-            value={phoneText}
-            onChange={(e) => setPhoneText(e.target.value)}
-            className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
-            placeholder={t('placeholder_phone')}
-          />
-        </div>
 
-        {/* Arka Yüz Oyma Derinliği */}
-        <div className="flex flex-col gap-3 mt-1">
-          <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-            <span>{t('phone_depth')}</span>
-            <span>{phoneDepth.toFixed(1)}mm</span>
-          </div>
-          <input 
-            type="range" 
-            min="0" max="2.0" step="0.2"
-            value={phoneDepth}
-            onChange={(e) => setPhoneDepth(parseFloat(e.target.value))}
-            className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-          />
-        </div>
 
 
       </div>

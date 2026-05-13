@@ -10,7 +10,6 @@ const App = () => {
   const [text, setText] = useState('YM2KY');
   const [subText, setSubText] = useState(''); // Alt Metin
   const [phoneText, setPhoneText] = useState(''); // Arka Yüz Metni
-  const [phoneDepth, setPhoneDepth] = useState(0.6); // Arka Yüz Oyma Derinliği
   const [isItalic, setIsItalic] = useState(false); // İtalik Yazı
   const [fontFamily, setFontFamily] = useState('droid'); // optimer, helvetiker, droid
   const [iconType, setIconType] = useState('none'); // none, clover, star_crescent, skull, heart, custom
@@ -95,8 +94,6 @@ const App = () => {
             setSubText={setSubText}
             phoneText={phoneText}
             setPhoneText={setPhoneText}
-            phoneDepth={phoneDepth}
-            setPhoneDepth={setPhoneDepth}
             fontFamily={fontFamily}
             setFontFamily={setFontFamily}
             iconType={iconType}
@@ -185,7 +182,6 @@ const App = () => {
                 text={text} 
                 subText={subText}
                 phoneText={phoneText}
-                phoneDepth={phoneDepth}
                 fontFamily={fontFamily}
                 iconType={iconType}
                 customSvgUrl={customSvgUrl}

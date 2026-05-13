@@ -139,7 +139,6 @@ export const Scene3D = ({
   text,
   subText,
   phoneText,
-  phoneDepth,
   fontFamily,
   iconType,
   customSvgUrl,
@@ -602,24 +601,7 @@ export const Scene3D = ({
             </Text3D>
           )}
 
-          {/* ARKA YÜZ METNİ (TELEFON VB.) */}
-          {hasPhoneText && phoneDepth > 0 && (
-            <group scale={[-1, 1, 1]}> {/* X ekseninde aynala ki alttan bakinca duz okunsun */}
-              <Text3D
-                name="TextPhone"
-                key={`phone-${phoneText}-${phoneDepth}-${scaleRatio}-${fontFamily}`}
-                font={fontPath}
-                size={phoneLetterSize}
-                height={phoneDepth} // Kullanicinin sectigi derinlik kadar yukari (ice) dogru
-                curveSegments={16}
-                bevelEnabled={false}
-                onUpdate={(self) => processPhoneGeometry(self, setTextSizePhone)}
-              >
-                {phoneText}
-                <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-              </Text3D>
-            </group>
-          )}
+
 
 
           {/* SİMGE (ICON) */}
