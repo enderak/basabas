@@ -142,19 +142,7 @@ export const SettingsCard = ({
           />
         </div>
 
-        {/* I Love Mode Toggle */}
-        <label className="flex items-center gap-3 p-3 bg-rose-50 border border-rose-100 rounded-xl cursor-pointer hover:bg-rose-100/80 transition-colors">
-          <div className="relative flex items-center">
-            <input 
-              type="checkbox" 
-              checked={isILoveMode}
-              onChange={(e) => setIsILoveMode(e.target.checked)}
-              className="peer sr-only"
-            />
-            <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-500"></div>
-          </div>
-          <span className="text-xs font-bold text-rose-800">{t('icon_i_love')}</span>
-        </label>
+
       </div>
     </div>
 
