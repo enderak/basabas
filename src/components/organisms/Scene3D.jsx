@@ -151,7 +151,6 @@ export const Scene3D = ({
   materialColor,
   baseColor,
   baseShape: selectedShape,
-  holePosition,
   textScale,
   textOffset,
   autoCenter,
@@ -336,10 +335,10 @@ export const Scene3D = ({
   textSubZ += zOffset;
 
   // HORIZONTAL LAYOUT (X-axis)
-  const isLeft = holePosition.includes('left');
-  const isRight = holePosition.includes('right');
-  const pLeft = isLeft ? 24.0 : 10.0;
-  const pRight = isRight ? 24.0 : 10.0;
+  const isLeft = false;
+  const isRight = false;
+  const pLeft = 12.0;
+  const pRight = 12.0;
   const pTop = 12.0;
   const pBottom = 12.0;
 
