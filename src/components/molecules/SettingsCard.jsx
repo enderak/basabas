@@ -233,6 +233,7 @@ export const SettingsCard = ({
                 <option value="rook">{t('icon_rook')} ♖</option>
                 <option value="racket_table">{t('icon_racket_table')} 🏓</option>
                 <option value="racket_tennis">{t('icon_racket_tennis')} 🎾</option>
+                <option value="olive">{t('icon_olive')} 🌿</option>
                 <option value="custom">{t('icon_custom')} 📁</option>
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
