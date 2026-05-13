@@ -413,6 +413,43 @@ export const Scene3D = ({
     }
   }, [selectedShape, baseW, baseD]);
 
+  // Çerçeve için içi boş şekiller
+  const rimFrameShape = useMemo(() => {
+    const outer = selectedShape === 'circle'
+      ? createCircleBaseShape(baseW - 1.0, baseD - 1.0)
+      : createRoundedRectShape(baseW - 1.0, baseD - 1.0, Math.min(5, baseW/2, baseD/2));
+    
+    const inner = selectedShape === 'circle'
+      ? createCircleBaseShape(baseW - 3.0, baseD - 3.0)
+      : createRoundedRectShape(baseW - 3.0, baseD - 3.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1));
+    
+    const frame = outer.clone();
+    frame.holes.push(new THREE.Path().setFromPoints(inner.getPoints()));
+    return frame;
+  }, [selectedShape, baseW, baseD]);
+
+  const rimDoubleFrameShape = useMemo(() => {
+    const outer1 = selectedShape === 'circle'
+      ? createCircleBaseShape(baseW - 0.5, baseD - 0.5)
+      : createRoundedRectShape(baseW - 0.5, baseD - 0.5, Math.min(5, baseW/2, baseD/2));
+    const inner1 = selectedShape === 'circle'
+      ? createCircleBaseShape(baseW - 1.5, baseD - 1.5)
+      : createRoundedRectShape(baseW - 1.5, baseD - 1.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 0.5));
+    
+    const outer2 = selectedShape === 'circle'
+      ? createCircleBaseShape(baseW - 3.0, baseD - 3.0)
+      : createRoundedRectShape(baseW - 3.0, baseD - 3.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1.5));
+    const inner2 = selectedShape === 'circle'
+      ? createCircleBaseShape(baseW - 4.0, baseD - 4.0)
+      : createRoundedRectShape(baseW - 4.0, baseD - 4.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2));
+
+    const frame = outer1.clone();
+    frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints()));
+    frame.holes.push(new THREE.Path().setFromPoints(outer2.getPoints()));
+    frame.holes.push(new THREE.Path().setFromPoints(inner2.getPoints()));
+    return frame;
+  }, [selectedShape, baseW, baseD]);
+
 
 
   const processTextGeometry = (self, setSizeFunc, yOffset) => {
@@ -532,12 +569,36 @@ export const Scene3D = ({
                 
                 return (
                   <>
-                    {(rimType === 'simple' || rimType === 'double' || rimType === 'greek') && (
-                      <mesh>
-                        <extrudeGeometry args={[baseShapeSolid, { depth: 1.5, bevelEnabled: false }]} />
+                    {rimType === 'simple' && (
+                      <mesh position={[0, 0, 0.5]}>
+                        <extrudeGeometry args={[rimFrameShape, { depth: 1.5, bevelEnabled: false }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
                     )}
+                    
+                    {rimType === 'double' && (
+                      <mesh position={[0, 0, 0.5]}>
+                        <extrudeGeometry args={[rimDoubleFrameShape, { depth: 1.5, bevelEnabled: false }]} />
+                        <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                      </mesh>
+                    )}
+
+                    {rimType === 'greek' && points.map((p, i) => {
+                      if (i % 3 !== 0) return null;
+                      const angle = Math.atan2(p.y, p.x);
+                      return (
+                        <group key={i} position={[p.x * 0.95, p.y * 0.95, 0.75]} rotation={[0, 0, angle]}>
+                          <mesh>
+                            <boxGeometry args={[2, 0.6, 1.5]} />
+                            <meshStandardMaterial color={materialColor} />
+                          </mesh>
+                          <mesh position={[0.8, 0.8, 0]} rotation={[0, 0, Math.PI/2]}>
+                            <boxGeometry args={[1.5, 0.6, 1.5]} />
+                            <meshStandardMaterial color={materialColor} />
+                          </mesh>
+                        </group>
+                      );
+                    })}
                     
                     {rimType === 'dotted' && points.map((p, i) => (
                       <mesh key={i} position={[p.x * 0.92, p.y * 0.92, 0.5]}>
