@@ -20,18 +20,18 @@ const App = () => {
   const [textDepth, setTextDepth] = useState(2.0); // Yazı kalınlığı (mm)
   const [materialColor, setMaterialColor] = useState('#22C55E'); // Yazı Rengi
   const [baseColor, setBaseColor] = useState('#0F172A'); // Taban Rengi
-  const [baseShape, setBaseShape] = useState('rectangle'); // Taban Şekli
-  const [holePosition, setHolePosition] = useState('top_left'); // Delik Konumu
+  const [baseShape, setBaseShape] = useState('circle'); // Taban Şekli
   const [targetWidth, setTargetWidth] = useState(0); // OTO
   const [textScale, setTextScale] = useState(100); // Yazı Boyutu (%)
   const [iconScale, setIconScale] = useState(100); // Simge Boyutu (%)
   const [textOffset, setTextOffset] = useState(0);
   const [autoCenter, setAutoCenter] = useState(true);
-  const [baseHeight, setBaseHeight] = useState(3.0); // İnce taban (anahtarlık)
-  const [appMode, setAppMode] = useState('keychain'); // keychain, stamp
-  const [isMirrored, setIsMirrored] = useState(false); // Aynalama (mühür için)
+  const [baseHeight, setBaseHeight] = useState(5.0); // Kalın taban (sabun mührü)
+  const [isMirrored, setIsMirrored] = useState(true); // Aynalama (mühür için varsayılan true)
   const [handleHeight, setHandleHeight] = useState(30.0); // Tutamak yüksekliği
   const [handleRadius, setHandleRadius] = useState(12.0); // Tutamak çapı
+  const [rimType, setRimType] = useState('simple'); // simple, double, dotted, scalloped, none
+  const [iconDepth, setIconDepth] = useState(2.0); // Simge derinliği
   const groupRef = useRef();
   const { t, i18n } = useTranslation();
 
@@ -118,8 +118,6 @@ const App = () => {
             setBaseColor={setBaseColor}
             baseShape={baseShape}
             setBaseShape={setBaseShape}
-            holePosition={holePosition}
-            setHolePosition={setHolePosition}
             textScale={textScale}
             setTextScale={setTextScale}
             iconScale={iconScale}
@@ -132,27 +130,16 @@ const App = () => {
             setBaseHeight={setBaseHeight}
             targetWidth={targetWidth}
             setTargetWidth={setTargetWidth}
-            appMode={appMode}
-            setAppMode={(mode) => {
-              setAppMode(mode);
-              if (mode === 'stamp') {
-                setIsMirrored(true);
-                setBaseHeight(5.0);
-                setBaseShape('circle');
-                setHolePosition('none');
-              } else {
-                setIsMirrored(false);
-                setBaseHeight(3.0);
-                setBaseShape('rectangle');
-                setHolePosition('top_left');
-              }
-            }}
             isMirrored={isMirrored}
             setIsMirrored={setIsMirrored}
             handleHeight={handleHeight}
             setHandleHeight={setHandleHeight}
             handleRadius={handleRadius}
             setHandleRadius={setHandleRadius}
+            rimType={rimType}
+            setRimType={setRimType}
+            iconDepth={iconDepth}
+            setIconDepth={setIconDepth}
             onExport={(isMultiColor) => handleExport(groupRef, text, isMultiColor)}
           />
 
@@ -213,17 +200,17 @@ const App = () => {
                 materialColor={materialColor}
                 baseColor={baseColor}
                 baseShape={baseShape}
-                holePosition={holePosition}
                 textScale={textScale}
                 iconScale={iconScale}
                 textOffset={textOffset}
                 autoCenter={autoCenter}
                 baseHeight={baseHeight}
                 targetWidth={targetWidth}
-                appMode={appMode}
                 isMirrored={isMirrored}
                 handleHeight={handleHeight}
                 handleRadius={handleRadius}
+                rimType={rimType}
+                iconDepth={iconDepth}
               />
             </Canvas>
           </div>

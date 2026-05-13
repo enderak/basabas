@@ -26,10 +26,11 @@ export const SettingsCard = ({
   autoCenter, setAutoCenter,
   baseHeight, setBaseHeight,
   targetWidth, setTargetWidth,
-  appMode, setAppMode,
   isMirrored, setIsMirrored,
   handleHeight, setHandleHeight,
   handleRadius, setHandleRadius,
+  rimType, setRimType,
+  iconDepth, setIconDepth,
   onExport 
 }) => {
   const { t, i18n } = useTranslation();
@@ -72,30 +73,6 @@ export const SettingsCard = ({
               {lang.code}
             </button>
           ))}
-        </div>
-      </div>
-
-      {/* MOD SEÇİMİ (APP MODE) */}
-      <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
-        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('app_mode')}</label>
-        <div className="bg-slate-100/80 p-1 rounded-xl flex items-center h-12 w-full relative">
-          <button 
-            onClick={() => setAppMode('keychain')}
-            className={`z-10 flex-1 flex flex-col items-center justify-center rounded-lg h-full transition-all ${
-              appMode === 'keychain' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
-            }`}
-          >
-            <span className="text-[10px] font-black uppercase tracking-tight leading-none">🔑 {t('mode_keychain')}</span>
-          </button>
-          <button 
-            onClick={() => setAppMode('stamp')}
-            className={`z-10 flex-1 flex flex-col items-center justify-center rounded-lg h-full transition-all ${
-              appMode === 'stamp' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
-            }`}
-          >
-            <span className="text-[10px] font-black uppercase tracking-tight leading-none">🧼 {t('mode_stamp')}</span>
-          </button>
-        </div>
       </div>
 
       <div className="flex flex-col gap-5 border-b border-slate-100 pb-5">
@@ -320,18 +297,34 @@ export const SettingsCard = ({
 
           {/* ICON SCALE */}
           {iconType !== 'none' && (
-            <div className="flex flex-col gap-3 mt-1">
-              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                <span>Simge Boyutu</span>
-                <span>{iconScale}%</span>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3 mt-1">
+                <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                  <span>{t('icon_depth')}</span>
+                  <span>{iconDepth.toFixed(1)}mm</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="0.5" max="5.0" step="0.5"
+                  value={iconDepth}
+                  onChange={(e) => setIconDepth(parseFloat(e.target.value))}
+                  className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+                />
               </div>
-              <input 
-                type="range" 
-                min="20" max="200" step="5"
-                value={iconScale}
-                onChange={(e) => setIconScale(parseInt(e.target.value))}
-                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-              />
+
+              <div className="flex flex-col gap-3">
+                <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                  <span>Simge Boyutu</span>
+                  <span>{iconScale}%</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="20" max="200" step="5"
+                  value={iconScale}
+                  onChange={(e) => setIconScale(parseInt(e.target.value))}
+                  className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+                />
+              </div>
             </div>
           )}
         </div>
@@ -427,69 +420,54 @@ export const SettingsCard = ({
         </div>
 
 
-        {/* Delik Konumu - Sadece Keychain modunda göster */}
-        {appMode === 'keychain' && (
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('hole_position')}</label>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { id: 'top_left', label: 'hole_top_left' },
-                { id: 'center_left', label: 'hole_center_left' },
-                { id: 'bottom_left', label: 'hole_bottom_left' },
-                { id: 'top_right', label: 'hole_top_right' },
-                { id: 'center_right', label: 'hole_center_right' },
-                { id: 'bottom_right', label: 'hole_bottom_right' }
-              ].map(pos => (
-                <button
-                  key={pos.id}
-                  onClick={() => setHolePosition(pos.id)}
-                  className={`py-2 px-3 text-[11px] font-bold rounded-xl transition-all border ${
-                    holePosition === pos.id 
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm' 
-                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                  }`}
-                >
-                  {t(pos.label)}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Çerçeve Deseni (Rim Type) */}
+        <div className="flex flex-col gap-2">
+          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('rim_type')}</label>
+          <select
+            value={rimType}
+            onChange={(e) => setRimType(e.target.value)}
+            className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+          >
+            <option value="none">{t('rim_none')}</option>
+            <option value="simple">{t('rim_simple')}</option>
+            <option value="double">{t('rim_double')}</option>
+            <option value="dotted">{t('rim_dotted')}</option>
+            <option value="scalloped">{t('rim_scalloped')}</option>
+          </select>
+        </div>
 
-        {/* TUTAMAK AYARLARI - Sadece Stamp modunda göster */}
-        {appMode === 'stamp' && (
-          <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('handle_settings')}</label>
-            
-            <div className="flex flex-col gap-3">
-              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                <span>{t('handle_height')}</span>
-                <span>{handleHeight.toFixed(0)}mm</span>
-              </div>
-              <input 
-                type="range" 
-                min="10" max="60" step="1"
-                value={handleHeight}
-                onChange={(e) => setHandleHeight(parseFloat(e.target.value))}
-                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-              />
+        {/* TUTAMAK AYARLARI */}
+        <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
+          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('handle_settings')}</label>
+          
+          <div className="flex flex-col gap-3">
+            <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+              <span>{t('handle_height')}</span>
+              <span>{handleHeight.toFixed(0)}mm</span>
             </div>
-
-            <div className="flex flex-col gap-3">
-              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                <span>{t('handle_radius')}</span>
-                <span>{handleRadius.toFixed(0)}mm</span>
-              </div>
-              <input 
-                type="range" 
-                min="5" max="25" step="1"
-                value={handleRadius}
-                onChange={(e) => setHandleRadius(parseFloat(e.target.value))}
-                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-              />
-            </div>
+            <input 
+              type="range" 
+              min="10" max="60" step="1"
+              value={handleHeight}
+              onChange={(e) => setHandleHeight(parseFloat(e.target.value))}
+              className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+            />
           </div>
-        )}
+
+          <div className="flex flex-col gap-3">
+            <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+              <span>{t('handle_radius')}</span>
+              <span>{handleRadius.toFixed(0)}mm</span>
+            </div>
+            <input 
+              type="range" 
+              min="5" max="25" step="1"
+              value={handleRadius}
+              onChange={(e) => setHandleRadius(parseFloat(e.target.value))}
+              className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+            />
+          </div>
+        </div>
 
         {/* Yazı Boyutu (Scale) */}
         <div className="flex flex-col gap-3">

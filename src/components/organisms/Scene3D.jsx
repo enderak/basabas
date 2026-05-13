@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { createIconShape } from '../../utils/svgIcons';
 import { createContourBaseShape } from '../../utils/contourUtils';
+import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader';
 
 const SCALE = 0.05;
 
@@ -157,10 +158,11 @@ export const Scene3D = ({
   baseHeight,
   targetWidth,
   iconScale: customIconScale = 100,
-  appMode = 'keychain',
-  isMirrored = false,
+  isMirrored = true,
   handleHeight = 30.0,
-  handleRadius = 12.0
+  handleRadius = 12.0,
+  rimType = 'simple',
+  iconDepth = 2.0
 }) => {
   const [textSizeMain, setTextSizeMain] = useState([60, 20, 6]);
   const [textSizeSub, setTextSizeSub] = useState([0, 0, 0]);
@@ -221,10 +223,71 @@ export const Scene3D = ({
 
   // Programatik icon shape oluştur
   const iconScale = 0.65 * (customIconScale / 100.0); // İkon yazıdan biraz küçük
+  
+  // Custom SVG Loading
+  const [customSvgShape, setCustomSvgShape] = useState(null);
+  
+  useMemo(() => {
+    if (iconType === 'custom' && customSvgUrl) {
+      const loader = new SVGLoader();
+      const svgData = loader.parse(atob(customSvgUrl.split(',')[1]));
+      const paths = svgData.paths;
+      const shapes = [];
+      
+      paths.forEach((path) => {
+        const pathShapes = path.toShapes(true);
+        shapes.push(...pathShapes);
+      });
+      
+      // Normalize and scale custom SVG
+      if (shapes.length > 0) {
+        const box = new THREE.Box2();
+        shapes.forEach(s => {
+          const pts = s.getPoints();
+          pts.forEach(p => box.expandByPoint(p));
+        });
+        
+        const sizeX = box.max.x - box.min.x;
+        const sizeY = box.max.y - box.min.y;
+        const maxDim = Math.max(sizeX, sizeY);
+        const targetSize = letterSize;
+        const s = targetSize / maxDim;
+        
+        const center = new THREE.Vector2();
+        box.getCenter(center);
+        
+        shapes.forEach(shape => {
+          shape.curves.forEach(curve => {
+            if (curve.v1) curve.v1.sub(center).multiplyScalar(s);
+            if (curve.v2) curve.v2.sub(center).multiplyScalar(s);
+            if (curve.v0) curve.v0.sub(center).multiplyScalar(s);
+            if (curve.cp) curve.cp.sub(center).multiplyScalar(s);
+            if (curve.cp1) curve.cp1.sub(center).multiplyScalar(s);
+            if (curve.cp2) curve.cp2.sub(center).multiplyScalar(s);
+          });
+          shape.holes.forEach(hole => {
+            hole.curves.forEach(curve => {
+              if (curve.v1) curve.v1.sub(center).multiplyScalar(s);
+              if (curve.v2) curve.v2.sub(center).multiplyScalar(s);
+              if (curve.v0) curve.v0.sub(center).multiplyScalar(s);
+              if (curve.cp) curve.cp.sub(center).multiplyScalar(s);
+              if (curve.cp1) curve.cp1.sub(center).multiplyScalar(s);
+              if (curve.cp2) curve.cp2.sub(center).multiplyScalar(s);
+            });
+          });
+        });
+        setCustomSvgShape(shapes);
+      }
+    } else {
+      setCustomSvgShape(null);
+    }
+  }, [iconType, customSvgUrl, letterSize]);
+
   const iconShape = useMemo(() => {
     if (iconType === 'none') return null;
+    if (iconType === 'custom') return customSvgShape;
     return createIconShape(iconType, letterSize);
-  }, [iconType, letterSize]);
+  }, [iconType, letterSize, customSvgShape]);
 
   const hasIcon = iconShape !== null;
   const iconSpacing = 2.0;
@@ -333,28 +396,7 @@ export const Scene3D = ({
   let holeX = 0;
   let holeZ = 0;
 
-  if (selectedShape === 'contour') {
-    // Tight bounds for contour to avoid long bridges
-    if (isLeft) holeX = contentLeft - holeR - 1.0;
-    else if (isRight) holeX = contentRight + holeR + 1.0;
-
-    if (holePosition.includes('top')) holeZ = -totalContentDepth/2 - 1.0;
-    else if (holePosition.includes('bottom')) holeZ = totalContentDepth/2 + 1.0;
-    else holeZ = 0;
-  } else {
-    // Standard bounds
-    if (isLeft) holeX = -baseW/2 + holeR + 4.5;
-    else if (isRight) holeX = baseW/2 - holeR - 4.5;
-
-    if (holePosition.includes('top')) holeZ = -baseD/2 + holeR + 4.5;
-    else if (holePosition.includes('bottom')) holeZ = baseD/2 - holeR - 4.5;
-    else holeZ = 0;
-  }
-
-  if (selectedShape === 'teardrop') {
-    holeZ = 0;
-  }
-
+  // Always no hole for stamp
   const innerScale = targetWidth ? (targetWidth / baseW) : 1;
   const scaledCenterZ = baseCenterZ * innerScale;
   const scaledBaseW = baseW * innerScale;
@@ -388,7 +430,7 @@ export const Scene3D = ({
     } else if (selectedShape === 'teardrop') {
       return createTeardropShape(baseW, baseD, isLeft, { x: holeX, y: holeZ, r: holeR });
     } else if (selectedShape === 'circle') {
-      return createCircleBaseShape(baseW, baseD, holePosition !== 'none' ? { x: holeX, y: holeZ, r: holeR } : null);
+      return createCircleBaseShape(baseW, baseD, null);
     } else {
       return createRoundedRectShape(
         baseW, 
@@ -494,29 +536,63 @@ export const Scene3D = ({
             <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
           </mesh>
 
-          {/* DEKORATİF ÇERÇEVE (RIM) - Sadece Stamp modunda ve Daire şeklinde */}
-          {appMode === 'stamp' && selectedShape === 'circle' && (
-            <mesh 
-              name="StampRim" 
-              position={[baseCenterX, baseH, baseCenterZ]} 
-              rotation={[-Math.PI / 2, 0, 0]}
-            >
-              <torusGeometry args={[Math.max(baseW, baseD) / 2 - 1.5, 0.8, 16, 100]} />
-              <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-            </mesh>
+          {/* DEKORATİF ÇERÇEVELER (RIM PATTERNS) */}
+          {rimType !== 'none' && (
+            <group position={[baseCenterX, baseH, baseCenterZ]} rotation={[-Math.PI / 2, 0, 0]}>
+              {rimType === 'simple' && (
+                <mesh>
+                  <torusGeometry args={[Math.max(baseW, baseD) / 2 - 1.5, 0.8, 16, 100]} />
+                  <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                </mesh>
+              )}
+              {rimType === 'double' && (
+                <>
+                  <mesh>
+                    <torusGeometry args={[Math.max(baseW, baseD) / 2 - 1.0, 0.6, 16, 100]} />
+                    <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                  </mesh>
+                  <mesh>
+                    <torusGeometry args={[Math.max(baseW, baseD) / 2 - 3.5, 0.6, 16, 100]} />
+                    <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                  </mesh>
+                </>
+              )}
+              {rimType === 'dotted' && (
+                Array.from({ length: 36 }).map((_, i) => {
+                  const angle = (i / 36) * Math.PI * 2;
+                  const r = Math.max(baseW, baseD) / 2 - 1.5;
+                  return (
+                    <mesh key={i} position={[Math.cos(angle) * r, Math.sin(angle) * r, 0]}>
+                      <sphereGeometry args={[1.0, 16, 16]} />
+                      <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                    </mesh>
+                  );
+                })
+              )}
+              {rimType === 'scalloped' && (
+                Array.from({ length: 32 }).map((_, i) => {
+                  const angle = (i / 32) * Math.PI * 2;
+                  const r = Math.max(baseW, baseD) / 2 - 0.5;
+                  return (
+                    <mesh key={i} position={[Math.cos(angle) * r, Math.sin(angle) * r, 0]}>
+                      <cylinderGeometry args={[2.5, 2.5, 1.2, 32]} />
+                      <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                    </mesh>
+                  );
+                })
+              )}
+            </group>
           )}
 
-          {/* TUTAMAK (HANDLE) - Sadece Stamp modunda */}
-          {appMode === 'stamp' && (
-            <mesh 
-              name="StampHandle" 
-              position={[baseCenterX, -handleHeight / 2, baseCenterZ]} 
-              rotation={[0, 0, 0]}
-            >
-              <cylinderGeometry args={[handleRadius * 0.8, handleRadius, handleHeight, 32]} />
-              <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
-            </mesh>
-          )}
+          {/* TUTAMAK (HANDLE) */}
+          <mesh 
+            name="StampHandle" 
+            position={[baseCenterX, -handleHeight / 2, baseCenterZ]} 
+            rotation={[0, 0, 0]}
+          >
+            <cylinderGeometry args={[handleRadius * 0.8, handleRadius, handleHeight, 32]} />
+            <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
+          </mesh>
 
           {/* ANA İÇERİK GRUBU (YAZI VE İKONLAR) - AYNALAMA BURADA UYGULANIYOR */}
           <group 
@@ -607,20 +683,20 @@ export const Scene3D = ({
               >
                 {iconShape.map((shape, idx) => (
                   <mesh key={idx} name={`TextIcon_${idx}`}>
-                    <extrudeGeometry args={[shape, { depth: textDepth, bevelEnabled: false }]} />
+                    <extrudeGeometry args={[shape, { depth: iconDepth, bevelEnabled: false }]} />
                     <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                   </mesh>
                 ))}
               </group>
             ) : (
               <mesh 
-                key={`icon-${iconType}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${iconPosition}-${letterSize}-${isMirrored}`}
+                key={`icon-${iconType}-${iconDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${iconPosition}-${letterSize}-${isMirrored}`}
                 name="TextIcon"
                 position={[iconX, baseH, iconZ]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={[iconScale, iconScale, 1]}
               >
-                <extrudeGeometry args={[iconShape, { depth: textDepth, bevelEnabled: false }]} />
+                <extrudeGeometry args={[iconShape, { depth: iconDepth, bevelEnabled: false }]} />
                 <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
               </mesh>
             )
