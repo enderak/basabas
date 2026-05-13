@@ -287,7 +287,7 @@ export const Scene3D = ({
   }, [iconType, letterSize, customSvgShape]);
 
   const hasIcon = iconShape !== null;
-  const iconSpacing = 2.0;
+  const iconSpacing = 8.0; // Spacing increased from 2.0 to 8.0
   const iconRealSize = hasIcon ? (letterSize * iconScale) : 0;
 
   // VERTICAL LAYOUT (Z-axis in 3D)
@@ -331,7 +331,8 @@ export const Scene3D = ({
   const pTop = 12.0;
   const pBottom = 12.0;
 
-  const maxTextWidth = Math.max(textSizeMain[0], textSizeSub[0]);
+  const estimatedWidth = (text?.length || 0) * letterSize * 0.6;
+  const maxTextWidth = Math.max(textSizeMain[0], textSizeSub[0]) || estimatedWidth;
   const textBlockWidth = maxTextWidth;
   let actualContentW = textBlockWidth;
   
@@ -339,7 +340,7 @@ export const Scene3D = ({
     if (iconPosition === 'top') {
       actualContentW = Math.max(actualContentW, iconRealSize);
     } else {
-      actualContentW = textBlockWidth + iconSpacing + iconRealSize;
+      actualContentW = textBlockWidth + (iconSpacing * 1.5) + iconRealSize;
     }
   }
 
