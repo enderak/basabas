@@ -354,21 +354,16 @@ export const Scene3D = ({
 
   let textX = contentCenter;
   let iconX = contentCenter;
-  let iLoveX = contentCenter;
 
   if (hasIcon) {
     if (iconPosition === 'left') {
       iconX = contentLeft + iconRealSize / 2;
       textX = contentRight - textBlockWidth / 2;
-      iLoveX = textX;
     } else if (iconPosition === 'right') {
       textX = contentLeft + textBlockWidth / 2;
-      iLoveX = textX;
       iconX = contentRight - iconRealSize / 2;
     }
-  } else {
-    // If no icon, still need to align I Love with text
-    iLoveX = textX;
+    // If no icon, still need to align text
   }
 
   const baseCenterX = 0; 
@@ -643,23 +638,6 @@ export const Scene3D = ({
             </group>
           )}
 
-          {/* I LOVE TITLE (Extra) */}
-          {isILoveMode && iLoveShape && (
-            <group 
-              key={`ilove-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${letterSize}-${isMirrored}`}
-              name="ILoveGroup"
-              position={[iLoveX, baseH, iLoveZ]}
-              rotation={[-Math.PI / 2, 0, 0]}
-              scale={[1, 1, 1]}
-            >
-              {iLoveShape.map((shape, idx) => (
-                <mesh key={idx} name={`ILoveIcon_${idx}`}>
-                  <extrudeGeometry args={[shape, { depth: textDepth, bevelEnabled: false }]} />
-                  <meshStandardMaterial color={idx === 1 ? '#EF4444' : materialColor} roughness={0.4} metalness={0.1} />
-                </mesh>
-              ))}
-            </group>
-          )}
 
           {/* SİMGE (ICON) */}
           {hasIcon && (
