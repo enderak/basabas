@@ -496,82 +496,61 @@ export const Scene3D = ({
           {/* DEKORATİF ÇERÇEVELER (RIM PATTERNS) */}
           {rimType !== 'none' && (
             <group position={[baseCenterX, baseH, baseCenterZ]} rotation={[-Math.PI / 2, 0, 0]}>
-              {rimType === 'simple' && (
-                <mesh>
-                  <torusGeometry args={[Math.max(baseW, baseD) / 2 - 1.5, 0.8, 16, 100]} />
-                  <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-                </mesh>
-              )}
-              {rimType === 'double' && (
-                <>
-                  <mesh>
-                    <torusGeometry args={[Math.max(baseW, baseD) / 2 - 1.0, 0.6, 16, 100]} />
-                    <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-                  </mesh>
-                  <mesh>
-                    <torusGeometry args={[Math.max(baseW, baseD) / 2 - 3.5, 0.6, 16, 100]} />
-                    <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-                  </mesh>
-                </>
-              )}
-              {rimType === 'dotted' && (
-                Array.from({ length: 36 }).map((_, i) => {
-                  const angle = (i / 36) * Math.PI * 2;
-                  const r = Math.max(baseW, baseD) / 2 - 1.5;
-                  return (
-                    <mesh key={i} position={[Math.cos(angle) * r, Math.sin(angle) * r, 0]}>
-                      <sphereGeometry args={[1.0, 16, 16]} />
-                      <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-                    </mesh>
-                  );
-                })
-              )}
-              {rimType === 'scalloped' && (
-                Array.from({ length: 32 }).map((_, i) => {
-                  const angle = (i / 32) * Math.PI * 2;
-                  const r = Math.max(baseW, baseD) / 2 - 0.5;
-                  return (
-                    <mesh key={i} position={[Math.cos(angle) * r, Math.sin(angle) * r, 0]}>
-                      <cylinderGeometry args={[2.5, 2.5, 1.2, 32]} />
-                      <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-                    </mesh>
-                  );
-                })
-              )}
-              {rimType === 'greek' && (
-                <mesh rotation={[0, 0, 0]}>
-                  <torusGeometry args={[Math.max(baseW, baseD) / 2 - 2, 1.2, 16, 100]} />
-                  <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-                </mesh>
-              )}
-              {rimType === 'zigzag' && (
-                Array.from({ length: 48 }).map((_, i) => {
-                  const angle = (i / 48) * Math.PI * 2;
-                  const r = Math.max(baseW, baseD) / 2 - 1.5;
-                  const offset = i % 2 === 0 ? 1 : -1;
-                  return (
-                    <mesh key={i} position={[Math.cos(angle) * (r + offset), Math.sin(angle) * (r + offset), 0]}>
-                      <boxGeometry args={[1.5, 1.5, 1.5]} />
-                      <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-                    </mesh>
-                  );
-                })
-              )}
-              {rimType === 'wave' && (
-                Array.from({ length: 60 }).map((_, i) => {
-                  const angle = (i / 60) * Math.PI * 2;
-                  const r = Math.max(baseW, baseD) / 2 - 1.5;
-                  const z = Math.sin(angle * 10) * 1.0;
-                  return (
-                    <mesh key={i} position={[Math.cos(angle) * r, Math.sin(angle) * r, z]}>
-                      <sphereGeometry args={[0.8, 16, 16]} />
-                      <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-                    </mesh>
-                  );
-                })
-              )}
+              {/* RİM PATTERNS BASED ON SHAPE */}
+              {(() => {
+                const rimCount = rimType === 'wave' ? 60 : (rimType === 'zigzag' ? 48 : 36);
+                // Get points along the perimeter, slightly offset inward
+                const points = baseShape.getSpacedPoints(rimCount);
+                const inset = 1.5; // Offset inward from edge
+                
+                return (
+                  <>
+                    {(rimType === 'simple' || rimType === 'double' || rimType === 'greek') && (
+                      <mesh>
+                        <extrudeGeometry args={[baseShape, { depth: 1.5, bevelEnabled: false }]} />
+                        <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                      </mesh>
+                    )}
+                    
+                    {rimType === 'dotted' && points.map((p, i) => (
+                      <mesh key={i} position={[p.x * 0.92, p.y * 0.92, 0.5]}>
+                        <sphereGeometry args={[1.0, 12, 12]} />
+                        <meshStandardMaterial color={materialColor} />
+                      </mesh>
+                    ))}
+
+                    {rimType === 'scalloped' && points.map((p, i) => (
+                      <mesh key={i} position={[p.x * 0.98, p.y * 0.98, 0.5]}>
+                        <cylinderGeometry args={[2.5, 2.5, 1.2, 16]} />
+                        <meshStandardMaterial color={materialColor} />
+                      </mesh>
+                    ))}
+
+                    {rimType === 'zigzag' && points.map((p, i) => {
+                      const offset = i % 2 === 0 ? 1.05 : 0.9;
+                      return (
+                        <mesh key={i} position={[p.x * offset, p.y * offset, 0.5]}>
+                          <boxGeometry args={[1.5, 1.5, 1.5]} />
+                          <meshStandardMaterial color={materialColor} />
+                        </mesh>
+                      );
+                    })}
+
+                    {rimType === 'wave' && points.map((p, i) => {
+                      const z = Math.sin((i/rimCount) * Math.PI * 2 * 10) * 1.0;
+                      return (
+                        <mesh key={i} position={[p.x * 0.95, p.y * 0.95, 0.5 + z]}>
+                          <sphereGeometry args={[0.8, 12, 12]} />
+                          <meshStandardMaterial color={materialColor} />
+                        </mesh>
+                      );
+                    })}
+                  </>
+                );
+              })()}
             </group>
           )}
+
 
           {/* TUTAMAK (HANDLE) */}
           <mesh 
