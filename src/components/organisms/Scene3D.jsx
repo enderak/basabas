@@ -291,6 +291,10 @@ export const Scene3D = ({
   const iconSpacing = 2.0;
   const iconRealSize = hasIcon ? (letterSize * iconScale) : 0;
 
+  // VERTICAL LAYOUT (Z-axis in 3D)
+  const lineSpacing = letterSize * 1.3;
+  let currentZ = 0;
+  
   let iconZ = 0;
   let textMainZ = 0;
   let textSubZ = 0;
