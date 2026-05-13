@@ -561,10 +561,20 @@ export const Scene3D = ({
               <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
             </mesh>
             {isHandleRemovable && (
-              <mesh position={[0, handleHeight/2 + 2.5, 0]}>
-                <cylinderGeometry args={[3.8, 3.8, 5, 32]} />
-                <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
-              </mesh>
+              <group position={[0, handleHeight/2, 0]}>
+                {/* Pin Base */}
+                <mesh position={[0, 2.5, 0]}>
+                  <cylinderGeometry args={[3.8, 3.8, 5, 32]} />
+                  <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
+                </mesh>
+                {/* Helical Threads (Visual) */}
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <mesh key={i} position={[0, 0.6 + i * 0.6, 0]} rotation={[0.08, 0, 0.05]}>
+                    <torusGeometry args={[3.8, 0.25, 8, 32]} />
+                    <meshStandardMaterial color={baseColor || '#334155'} roughness={0.4} metalness={0.2} />
+                  </mesh>
+                ))}
+              </group>
             )}
           </group>
 
