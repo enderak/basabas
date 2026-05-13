@@ -385,9 +385,21 @@ export const Scene3D = ({
   const scaledBaseW = baseW * innerScale;
   const scaledBaseD = baseD * innerScale;
 
-  // Taban şekli seçimi
-  const baseShape = useMemo(() => {
-    const holeConfig = isHandleRemovable ? { x: 0, y: 0, r: 4.0 } : null; // 8mm connection hole
+  const baseShapeSolid = useMemo(() => {
+    if (selectedShape === 'circle') {
+      return createCircleBaseShape(baseW, baseD, null);
+    } else {
+      return createRoundedRectShape(
+        baseW, 
+        baseD, 
+        Math.min(5, baseW/2, baseD/2), 
+        null
+      );
+    }
+  }, [selectedShape, baseW, baseD]);
+
+  const baseShapeWithHole = useMemo(() => {
+    const holeConfig = { x: 0, y: 0, r: 4.2 }; // 8.4mm hole for 8mm threaded pin
     if (selectedShape === 'circle') {
       return createCircleBaseShape(baseW, baseD, holeConfig);
     } else {
@@ -398,7 +410,7 @@ export const Scene3D = ({
         holeConfig
       );
     }
-  }, [selectedShape, baseW, baseD, isHandleRemovable]);
+  }, [selectedShape, baseW, baseD]);
 
 
 
@@ -484,16 +496,28 @@ export const Scene3D = ({
 
       <group scale={[SCALE, SCALE, SCALE]} position={[0, -0.5, zCenterOffset * SCALE]}>
         <group ref={groupRef} scale={[innerScale, innerScale, innerScale]}>
-          {/* TABAN PLAKASI */}
-          <mesh 
-            name="BasePlate" 
-            position={[baseCenterX, 0, baseCenterZ]} 
-            rotation={[-Math.PI / 2, 0, 0]}
-            receiveShadow
-          >
-            <extrudeGeometry args={[baseShape, { depth: baseH, bevelEnabled: false }]} />
-            <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
-          </mesh>
+          {/* TABAN (BASE PLATE) */}
+          <group position={[baseCenterX, 0, baseCenterZ]} rotation={[-Math.PI / 2, 0, 0]}>
+            {isHandleRemovable ? (
+              <>
+                {/* Alt katman - delikli (3mm) */}
+                <mesh>
+                  <extrudeGeometry args={[baseShapeWithHole, { depth: baseH * 0.7, bevelEnabled: false }]} />
+                  <meshStandardMaterial color={baseColor || '#0F172A'} roughness={0.8} />
+                </mesh>
+                {/* Üst katman - kapalı (2mm) */}
+                <mesh position={[0, 0, baseH * 0.7]}>
+                  <extrudeGeometry args={[baseShapeSolid, { depth: baseH * 0.3, bevelEnabled: false }]} />
+                  <meshStandardMaterial color={baseColor || '#0F172A'} roughness={0.8} />
+                </mesh>
+              </>
+            ) : (
+              <mesh>
+                <extrudeGeometry args={[baseShapeSolid, { depth: baseH, bevelEnabled: false }]} />
+                <meshStandardMaterial color={baseColor || '#0F172A'} roughness={0.8} />
+              </mesh>
+            )}
+          </group>
 
           {/* DEKORATİF ÇERÇEVELER (RIM PATTERNS) */}
           {rimType !== 'none' && (
@@ -502,14 +526,14 @@ export const Scene3D = ({
               {(() => {
                 const rimCount = rimType === 'wave' ? 60 : (rimType === 'zigzag' ? 48 : 36);
                 // Get points along the perimeter, slightly offset inward
-                const points = baseShape.getSpacedPoints(rimCount);
+                const points = baseShapeSolid.getSpacedPoints(rimCount);
                 const inset = 1.5; // Offset inward from edge
                 
                 return (
                   <>
                     {(rimType === 'simple' || rimType === 'double' || rimType === 'greek') && (
                       <mesh>
-                        <extrudeGeometry args={[baseShape, { depth: 1.5, bevelEnabled: false }]} />
+                        <extrudeGeometry args={[baseShapeSolid, { depth: 1.5, bevelEnabled: false }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
                     )}
@@ -563,13 +587,13 @@ export const Scene3D = ({
             {isHandleRemovable && (
               <group position={[0, handleHeight/2, 0]}>
                 {/* Pin Base */}
-                <mesh position={[0, 2.5, 0]}>
-                  <cylinderGeometry args={[3.8, 3.8, 5, 32]} />
+                <mesh position={[0, 1.5, 0]}>
+                  <cylinderGeometry args={[3.8, 3.8, 3.5, 32]} />
                   <meshStandardMaterial color={baseColor || '#334155'} roughness={0.8} />
                 </mesh>
                 {/* Helical Threads (Visual) */}
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <mesh key={i} position={[0, 0.6 + i * 0.6, 0]} rotation={[0.08, 0, 0.05]}>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <mesh key={i} position={[0, 0.5 + i * 0.6, 0]} rotation={[0.08, 0, 0.05]}>
                     <torusGeometry args={[3.8, 0.25, 8, 32]} />
                     <meshStandardMaterial color={baseColor || '#334155'} roughness={0.4} metalness={0.2} />
                   </mesh>
