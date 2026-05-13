@@ -138,6 +138,7 @@ const createCircleBaseShape = (width, depth, holeConfig) => {
 export const Scene3D = ({
   text,
   subText,
+  midText,
   phoneText,
   fontFamily,
   iconType,
@@ -165,6 +166,7 @@ export const Scene3D = ({
 }) => {
   const [textSizeMain, setTextSizeMain] = useState([60, 20, 6]);
   const [textSizeSub, setTextSizeSub] = useState([0, 0, 0]);
+  const [textSizeMid, setTextSizeMid] = useState([0, 0, 0]);
   const [textSizePhone, setTextSizePhone] = useState([0, 0, 0]);
   const [loadedFont, setLoadedFont] = useState(null);
 
@@ -207,6 +209,7 @@ export const Scene3D = ({
 
   // Font haritalama
   const fontPath = useMemo(() => {
+    if (fontFamily === 'plus') return "/fonts/Plus_Jakarta_Sans_Bold.json";
     if (fontFamily === 'helvetiker') return "/fonts/helvetiker_bold.typeface.json";
     if (fontFamily === 'droid') return "/fonts/droid_sans_bold.typeface.json";
     return "/fonts/optimer_bold.typeface.json";
@@ -298,6 +301,7 @@ export const Scene3D = ({
   
   let iconZ = 0;
   let textMainZ = 0;
+  let textMidZ = 0;
   let textSubZ = 0;
 
   if (hasIcon && iconPosition === 'top') {
@@ -307,6 +311,12 @@ export const Scene3D = ({
 
   textMainZ = currentZ + letterSize / 2;
   currentZ += letterSize;
+
+  if (hasMidText) {
+    currentZ += (lineSpacing - letterSize);
+    textMidZ = currentZ + letterSize / 2;
+    currentZ += letterSize;
+  }
 
   if (hasSubText) {
     currentZ += (lineSpacing - letterSize); // gap
@@ -323,6 +333,7 @@ export const Scene3D = ({
 
   iconZ += zOffset;
   textMainZ += zOffset;
+  textMidZ += zOffset;
   textSubZ += zOffset;
 
   // HORIZONTAL LAYOUT (X-axis)
@@ -334,7 +345,7 @@ export const Scene3D = ({
   const pBottom = 12.0;
 
   const estimatedWidth = (text?.length || 0) * letterSize * 0.6;
-  const maxTextWidth = Math.max(textSizeMain[0], textSizeSub[0]) || estimatedWidth;
+  const maxTextWidth = Math.max(textSizeMain[0], textSizeMid[0], textSizeSub[0]) || estimatedWidth;
   const textBlockWidth = maxTextWidth;
   let actualContentW = textBlockWidth;
   
@@ -571,14 +582,14 @@ export const Scene3D = ({
                   <>
                     {rimType === 'simple' && (
                       <mesh position={[0, 0, 0.5]}>
-                        <extrudeGeometry args={[rimFrameShape, { depth: 1.5, bevelEnabled: false }]} />
+                        <extrudeGeometry args={[rimFrameShape, { depth: textDepth, bevelEnabled: false }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
                     )}
                     
                     {rimType === 'double' && (
                       <mesh position={[0, 0, 0.5]}>
-                        <extrudeGeometry args={[rimDoubleFrameShape, { depth: 1.5, bevelEnabled: false }]} />
+                        <extrudeGeometry args={[rimDoubleFrameShape, { depth: textDepth, bevelEnabled: false }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
                     )}
@@ -683,6 +694,23 @@ export const Scene3D = ({
               onUpdate={(self) => processTextGeometry(self, setTextSizeMain, textMainZ)}
             >
               {text}
+              <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+            </Text3D>
+          )}
+
+          {/* ORTA METİN */}
+          {hasMidText && (
+            <Text3D
+              name="TextMid"
+              key={`mid-${midText}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${fontFamily}-${hasIcon}-${isMirrored}`}
+              font={fontPath}
+              size={letterSize}
+              height={textDepth} 
+              curveSegments={16}
+              bevelEnabled={false}
+              onUpdate={(self) => processTextGeometry(self, setTextSizeMid, textMidZ)}
+            >
+              {midText}
               <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
             </Text3D>
           )}

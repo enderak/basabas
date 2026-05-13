@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 const App = () => {
   const [text, setText] = useState('YM2KY');
   const [subText, setSubText] = useState(''); // Alt Metin
+  const [midText, setMidText] = useState(''); // Orta Metin
   const [phoneText, setPhoneText] = useState(''); // Arka Yüz Metni
   const [isItalic, setIsItalic] = useState(false); // İtalik Yazı
   const [fontFamily, setFontFamily] = useState('droid'); // optimer, helvetiker, droid
@@ -94,6 +95,8 @@ const App = () => {
             setText={setText}
             subText={subText}
             setSubText={setSubText}
+            midText={midText}
+            setMidText={setMidText}
             phoneText={phoneText}
             setPhoneText={setPhoneText}
             fontFamily={fontFamily}
@@ -187,6 +190,7 @@ const App = () => {
               <Scene3D 
                 text={text} 
                 subText={subText}
+                midText={midText}
                 phoneText={phoneText}
                 fontFamily={fontFamily}
                 iconType={iconType}

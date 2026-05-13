@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 export const SettingsCard = ({ 
   text, setText, 
   subText, setSubText,
+  midText, setMidText,
   phoneText, setPhoneText,
   fontFamily, setFontFamily,
   iconType, setIconType,
@@ -81,15 +82,16 @@ export const SettingsCard = ({
         <div className="flex flex-col gap-2">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('font_family')}</label>
           <div className="relative">
-            <select
-              value={fontFamily}
-              onChange={(e) => setFontFamily(e.target.value)}
-              className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
-            >
-              <option value="optimer">Optimer (Kalın)</option>
-              <option value="helvetiker">Helvetiker (Düz/Modern)</option>
-              <option value="droid">Droid Sans (Yuvarlak)</option>
-            </select>
+              <select
+                value={fontFamily}
+                onChange={(e) => setFontFamily(e.target.value)}
+                className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+              >
+                <option value="plus">Jakarta Sans (TR Support)</option>
+                <option value="droid">Droid Sans</option>
+                <option value="helvetiker">Helvetiker</option>
+                <option value="optimer">Optimer</option>
+              </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -104,7 +106,17 @@ export const SettingsCard = ({
             value={text}
             onChange={(e) => setText(e.target.value.toLocaleUpperCase('tr-TR'))}
             className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
-            placeholder={t('placeholder')}
+            placeholder={t('placeholder_text')}
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-[11px] font-bold text-slate-500">{t('mid_text')}</label>
+          <input 
+            value={midText}
+            onChange={(e) => setMidText(e.target.value)}
+            className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
+            placeholder={t('placeholder_mid_text')}
           />
         </div>
         
