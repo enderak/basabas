@@ -4,9 +4,9 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   TR: {
     translation: {
-      "title": "SAKRAD SABUN İSTAMPASI ÜRETİCİ",
-      "settings_title": "Oluşturucu Ayarları",
-      "settings_desc": "3D yazdırılabilir anahtarlığınızı özelleştirin",
+      "title": "SAKRAD SABUN İSTAMPA ÜRETİCİ",
+      "settings_title": "İstampa Ayarları",
+      "settings_desc": "Sabun mührünüzü kişiselleştirin",
       "language": "Dil",
       "label_text": "Ana Metin",
       "sub_text": "Alt Metin (Opsiyonel)",
@@ -88,9 +88,9 @@ const resources = {
   },
   EN: {
     translation: {
-      "title": "SAKRAD Soap Stamp Generator",
-      "settings_title": "Generator Settings",
-      "settings_desc": "Customize your 3D printable keychain",
+      "title": "SAKRAD SOAP STAMP GENERATOR",
+      "settings_title": "Stamp Settings",
+      "settings_desc": "Customize your 3D soap stamp",
       "language": "Language",
       "label_text": "Main Text",
       "sub_text": "Sub Text (Optional)",
