@@ -74,8 +74,9 @@ export const SettingsCard = ({
             </button>
           ))}
       </div>
+    </div>
 
-      <div className="flex flex-col gap-5 border-b border-slate-100 pb-5">
+    <div className="flex flex-col gap-5 border-b border-slate-100 pb-5">
         {/* YAZI TİPİ (FONT) SEÇİMİ */}
         <div className="flex flex-col gap-2">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('font_family')}</label>
@@ -156,8 +157,9 @@ export const SettingsCard = ({
           <span className="text-xs font-bold text-rose-800">{t('icon_i_love')}</span>
         </label>
       </div>
+    </div>
 
-      {/* Yazı Derinliği (Çıkıntı yüksekliği) */}
+    {/* Yazı Derinliği (Çıkıntı yüksekliği) */}
       <div className="flex flex-col gap-4 mt-2">
         <div className="flex flex-col gap-3">
           <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
@@ -554,6 +556,5 @@ export const SettingsCard = ({
       </div>
 
     </div>
-  </div>
   );
 };
