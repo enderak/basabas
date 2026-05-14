@@ -507,6 +507,13 @@ export const Scene3D = ({
     const outer2 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 4.5, baseD - 4.5)
       : createRoundedRectShape(baseW - 4.5, baseD - 4.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1.5));
+    const inner2 = selectedShape === 'circle'
+      ? createCircleBaseShape(baseW - 6.0, baseD - 6.0)
+      : createRoundedRectShape(baseW - 6.0, baseD - 6.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2.2));
+
+    const frame = outer1.clone();
+    frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints(128)));
+    frame.holes.push(new THREE.Path().setFromPoints(outer2.getPoints(128)));
     frame.holes.push(new THREE.Path().setFromPoints(inner2.getPoints(128)));
     return frame;
   }, [selectedShape, baseW, baseD]);
