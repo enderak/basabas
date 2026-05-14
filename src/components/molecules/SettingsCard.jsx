@@ -395,11 +395,19 @@ export const SettingsCard = ({
             <option value="greek">{t('rim_greek')}</option>
             <option value="zigzag">{t('rim_zigzag')}</option>
             <option value="wave">{t('rim_wave')}</option>
+            <option value="double_dotted">{t('rim_double_dotted')}</option>
           </select>
         </div>
 
         <div className="flex flex-col gap-5">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('handle_settings')}</label>
+          <RangeInput 
+            label="Tabla Kalınlığı"
+            value={baseHeight}
+            min="2" max="25" step="1"
+            suffix="mm"
+            onChange={setBaseHeight}
+          />
           <RangeInput 
             label={t('handle_height')}
             value={handleHeight}

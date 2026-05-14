@@ -703,6 +703,23 @@ export const Scene3D = ({
                         </mesh>
                       );
                     })}
+
+                    {rimType === 'double_dotted' && (
+                      <>
+                        {points.map((p, i) => (
+                          <mesh key={`d1-${i}`} position={[p.x * 0.94, p.y * 0.94, 0.5]}>
+                            <sphereGeometry args={[0.9, 12, 12]} />
+                            <meshStandardMaterial color={materialColor} />
+                          </mesh>
+                        ))}
+                        {points.map((p, i) => (
+                          <mesh key={`d2-${i}`} position={[p.x * 0.86, p.y * 0.86, 0.5]}>
+                            <sphereGeometry args={[0.9, 12, 12]} />
+                            <meshStandardMaterial color={materialColor} />
+                          </mesh>
+                        ))}
+                      </>
+                    )}
                   </>
                 );
               })()}
