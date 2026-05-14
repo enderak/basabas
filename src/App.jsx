@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useTransition } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Scene3D } from './components/organisms/Scene3D';
 import { SettingsCard } from './components/molecules/SettingsCard';
@@ -37,8 +37,19 @@ const App = () => {
   const [rimType, setRimType] = useState('simple'); // simple, double, dotted, scalloped, none
   const [iconDepth, setIconDepth] = useState(2.0); // Simge derinliği
   const [isHandleRemovable, setIsHandleRemovable] = useState(false); // Sökülebilir sap
+  const [isPending, startTransition] = useTransition();
   const groupRef = useRef();
   const { t, i18n } = useTranslation();
+
+  // Optimized setters for heavy 3D updates
+  const setFontFamilyOptimized = (val) => startTransition(() => setFontFamily(val));
+  const setBaseShapeOptimized = (val) => startTransition(() => setBaseShape(val));
+  const setRimTypeOptimized = (val) => startTransition(() => setRimType(val));
+  const setIconTopTypeOptimized = (val) => startTransition(() => setIconTopType(val));
+  const setIconBottomTypeOptimized = (val) => startTransition(() => setIconBottomType(val));
+  const setTextOptimized = (val) => startTransition(() => setText(val));
+  const setMidTextOptimized = (val) => startTransition(() => setMidText(val));
+  const setSubTextOptimized = (val) => startTransition(() => setSubText(val));
 
   return (
     <div className="min-h-screen w-full bg-[#f4f5f8] flex flex-col font-sans text-slate-900 pb-24 md:pb-0 relative overflow-x-hidden">
@@ -96,19 +107,19 @@ const App = () => {
 
           <SettingsCard 
             text={text} 
-            setText={setText}
+            setText={setTextOptimized}
             subText={subText}
-            setSubText={setSubText}
+            setSubText={setSubTextOptimized}
             midText={midText}
-            setMidText={setMidText}
+            setMidText={setMidTextOptimized}
             phoneText={phoneText}
             setPhoneText={setPhoneText}
             fontFamily={fontFamily}
-            setFontFamily={setFontFamily}
+            setFontFamily={setFontFamilyOptimized}
             iconTopType={iconTopType}
-            setIconTopType={setIconTopType}
+            setIconTopType={setIconTopTypeOptimized}
             iconBottomType={iconBottomType}
-            setIconBottomType={setIconBottomType}
+            setIconBottomType={setIconBottomTypeOptimized}
             textScaleMain={textScaleMain}
             setTextScaleMain={setTextScaleMain}
             textScaleMid={textScaleMid}
@@ -132,7 +143,7 @@ const App = () => {
             handleColor={handleColor}
             setHandleColor={setHandleColor}
             baseShape={baseShape}
-            setBaseShape={setBaseShape}
+            setBaseShape={setBaseShapeOptimized}
             iconScale={iconScale}
             setIconScale={setIconScale}
             textOffset={textOffset}
@@ -150,7 +161,7 @@ const App = () => {
             handleRadius={handleRadius}
             setHandleRadius={setHandleRadius}
             rimType={rimType}
-            setRimType={setRimType}
+            setRimType={setRimTypeOptimized}
             iconDepth={iconDepth}
             setIconDepth={setIconDepth}
             isHandleRemovable={isHandleRemovable}

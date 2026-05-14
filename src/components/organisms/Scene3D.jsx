@@ -589,18 +589,18 @@ export const Scene3D = ({
               <>
                 {/* Alt katman - delikli (3mm) */}
                 <mesh>
-                  <extrudeGeometry args={[baseShapeWithHole, { depth: baseH * 0.7, bevelEnabled: false, curveSegments: 128 }]} />
+                  <extrudeGeometry args={[baseShapeWithHole, { depth: baseH * 0.7, bevelEnabled: false, curveSegments: 64 }]} />
                   <meshStandardMaterial color={baseColor || '#0F172A'} roughness={0.8} />
                 </mesh>
                 {/* Üst katman - kapalı (2mm) */}
                 <mesh position={[0, 0, baseH * 0.7]}>
-                  <extrudeGeometry args={[baseShapeSolid, { depth: baseH * 0.3, bevelEnabled: false, curveSegments: 128 }]} />
+                  <extrudeGeometry args={[baseShapeSolid, { depth: baseH * 0.3, bevelEnabled: false, curveSegments: 64 }]} />
                   <meshStandardMaterial color={baseColor || '#0F172A'} roughness={0.8} />
                 </mesh>
               </>
             ) : (
               <mesh>
-                <extrudeGeometry args={[baseShapeSolid, { depth: baseH, bevelEnabled: false, curveSegments: 128 }]} />
+                <extrudeGeometry args={[baseShapeSolid, { depth: baseH, bevelEnabled: false, curveSegments: 64 }]} />
                 <meshStandardMaterial color={baseColor || '#0F172A'} roughness={0.8} />
               </mesh>
             )}
@@ -620,14 +620,14 @@ export const Scene3D = ({
                   <>
                     {rimType === 'simple' && (
                       <mesh position={[0, 0, 0.5]}>
-                        <extrudeGeometry args={[rimFrameShape, { depth: textDepth, bevelEnabled: false, curveSegments: 128 }]} />
+                        <extrudeGeometry args={[rimFrameShape, { depth: textDepth, bevelEnabled: false, curveSegments: 64 }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
                     )}
                     
                     {rimType === 'double' && (
                       <mesh position={[0, 0, 0.5]}>
-                        <extrudeGeometry args={[rimDoubleFrameShape, { depth: textDepth, bevelEnabled: false, curveSegments: 128 }]} />
+                        <extrudeGeometry args={[rimDoubleFrameShape, { depth: textDepth, bevelEnabled: false, curveSegments: 64 }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
                     )}
@@ -692,7 +692,7 @@ export const Scene3D = ({
           {/* TUTAMAK (HANDLE) - PROFESYONEL VINTAGE SAP */}
           <group name="HandleGroup" position={[baseCenterX, 0, baseCenterZ]} rotation={[Math.PI, 0, 0]}>
             <mesh>
-              <latheGeometry args={[handlePoints, 64]} />
+              <latheGeometry args={[handlePoints, 32]} />
               <meshStandardMaterial color={handleColor || '#334155'} roughness={0.6} metalness={0.2} />
             </mesh>
 
