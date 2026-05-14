@@ -4,7 +4,7 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   TR: {
     translation: {
-      "title": "SAKRAD MÜHÜR JENERATÖRÜ",
+      "title": "SAKRAD MÜHÜR ÜRETİCİ",
       "settings_title": "Mühür Ayarları",
       "settings_desc": "3D mühür tasarımınızı kişiselleştirin",
       "language": "Dil",
@@ -100,7 +100,7 @@ const resources = {
   },
   EN: {
     translation: {
-      "title": "SAKRAD SEAL GENERATOR",
+      "title": "SAKRAD SEAL CREATOR",
       "settings_title": "Seal Settings",
       "settings_desc": "Customize your 3D seal design",
       "language": "Language",
