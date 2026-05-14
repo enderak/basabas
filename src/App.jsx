@@ -50,6 +50,11 @@ const App = () => {
   const setTextOptimized = (val) => startTransition(() => setText(val));
   const setMidTextOptimized = (val) => startTransition(() => setMidText(val));
   const setSubTextOptimized = (val) => startTransition(() => setSubText(val));
+  const setTextDepthOptimized = (val) => startTransition(() => setTextDepth(val));
+  const setIconDepthOptimized = (val) => startTransition(() => setIconDepth(val));
+  const setIconScaleOptimized = (val) => startTransition(() => setIconScale(val));
+  const setHandleHeightOptimized = (val) => startTransition(() => setHandleHeight(val));
+  const setHandleRadiusOptimized = (val) => startTransition(() => setHandleRadius(val));
 
   return (
     <div className="min-h-screen w-full bg-[#f4f5f8] flex flex-col font-sans text-slate-900 pb-24 md:pb-0 relative overflow-x-hidden">
@@ -135,7 +140,7 @@ const App = () => {
             isItalic={isItalic}
             setIsItalic={setIsItalic}
             textDepth={textDepth}
-            setTextDepth={setTextDepth}
+            setTextDepth={setTextDepthOptimized}
             materialColor={materialColor}
             setMaterialColor={setMaterialColor}
             baseColor={baseColor}
@@ -145,7 +150,7 @@ const App = () => {
             baseShape={baseShape}
             setBaseShape={setBaseShapeOptimized}
             iconScale={iconScale}
-            setIconScale={setIconScale}
+            setIconScale={setIconScaleOptimized}
             textOffset={textOffset}
             setTextOffset={setTextOffset}
             autoCenter={autoCenter}
@@ -157,13 +162,13 @@ const App = () => {
             isMirrored={isMirrored}
             setIsMirrored={setIsMirrored}
             handleHeight={handleHeight}
-            setHandleHeight={setHandleHeight}
+            setHandleHeight={setHandleHeightOptimized}
             handleRadius={handleRadius}
-            setHandleRadius={setHandleRadius}
+            setHandleRadius={setHandleRadiusOptimized}
             rimType={rimType}
             setRimType={setRimTypeOptimized}
             iconDepth={iconDepth}
-            setIconDepth={setIconDepth}
+            setIconDepth={setIconDepthOptimized}
             isHandleRemovable={isHandleRemovable}
             setIsHandleRemovable={setIsHandleRemovable}
             onExport={(isMultiColor) => handleExport(groupRef, text, isMultiColor)}

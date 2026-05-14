@@ -3,6 +3,39 @@ import { Button } from "../atoms/Button";
 import { Download, Globe } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
+const RangeInput = ({ label, value, min, max, step, onChange, suffix = "%" }) => {
+  const [localValue, setLocalValue] = React.useState(value);
+
+  React.useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  const handleChange = (e) => {
+    const val = parseFloat(e.target.value);
+    setLocalValue(val);
+    // Use a small timeout to debounce the heavy 3D update
+    if (window.rangeTimer) clearTimeout(window.rangeTimer);
+    window.rangeTimer = setTimeout(() => {
+      onChange(val);
+    }, 16); // ~1 frame delay
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+        <span>{label}</span>
+        <span>{localValue}{suffix}</span>
+      </div>
+      <input 
+        type="range" min={min} max={max} step={step}
+        value={localValue}
+        onChange={handleChange}
+        className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+      />
+    </div>
+  );
+};
+
 export const SettingsCard = ({ 
   text, setText, 
   subText, setSubText,
@@ -135,47 +168,29 @@ export const SettingsCard = ({
         <div className="flex flex-col gap-4 pt-2 border-t border-slate-100">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('text_sizes')}</label>
           
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-              <span>{t('label_text')}</span>
-              <span>{textScaleMain}%</span>
-            </div>
-            <input 
-              type="range" min="20" max="150" step="1"
-              value={textScaleMain}
-              onChange={(e) => setTextScaleMain(parseInt(e.target.value))}
-              className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-            />
-          </div>
+          <RangeInput 
+            label={t('label_text')}
+            value={textScaleMain}
+            min="20" max="150" step="1"
+            onChange={setTextScaleMain}
+          />
 
           {midText && (
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                <span>{t('mid_text')}</span>
-                <span>{textScaleMid}%</span>
-              </div>
-              <input 
-                type="range" min="20" max="150" step="1"
-                value={textScaleMid}
-                onChange={(e) => setTextScaleMid(parseInt(e.target.value))}
-                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-              />
-            </div>
+            <RangeInput 
+              label={t('mid_text')}
+              value={textScaleMid}
+              min="20" max="150" step="1"
+              onChange={setTextScaleMid}
+            />
           )}
 
           {subText && (
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                <span>{t('sub_text')}</span>
-                <span>{textScaleSub}%</span>
-              </div>
-              <input 
-                type="range" min="20" max="150" step="1"
-                value={textScaleSub}
-                onChange={(e) => setTextScaleSub(parseInt(e.target.value))}
-                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-              />
-            </div>
+            <RangeInput 
+              label={t('sub_text')}
+              value={textScaleSub}
+              min="20" max="150" step="1"
+              onChange={setTextScaleSub}
+            />
           )}
         </div>
       </div>
@@ -183,18 +198,13 @@ export const SettingsCard = ({
       {/* Fiziksel Ayarlar */}
       <div className="flex flex-col gap-5">
         
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-            <span>{t('text_depth')}</span>
-            <span>{textDepth.toFixed(1)}mm</span>
-          </div>
-          <input 
-            type="range" min="0.5" max="5.0" step="0.1"
-            value={textDepth}
-            onChange={(e) => setTextDepth(parseFloat(e.target.value))}
-            className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-          />
-        </div>
+        <RangeInput 
+          label={t('text_depth')}
+          value={textDepth}
+          min="0.5" max="5.0" step="0.1"
+          suffix="mm"
+          onChange={setTextDepth}
+        />
 
         <div className="flex flex-col gap-2">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('transform')}</label>
@@ -279,30 +289,19 @@ export const SettingsCard = ({
 
         {hasAnyIcon && (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-3">
-              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                <span>{t('icon_depth')}</span>
-                <span>{iconDepth.toFixed(1)}mm</span>
-              </div>
-              <input 
-                type="range" min="0.5" max="5.0" step="0.1"
-                value={iconDepth}
-                onChange={(e) => setIconDepth(parseFloat(e.target.value))}
-                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-              />
-            </div>
-            <div className="flex flex-col gap-3">
-              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                <span>Simge Boyutu</span>
-                <span>{iconScale}%</span>
-              </div>
-              <input 
-                type="range" min="20" max="200" step="5"
-                value={iconScale}
-                onChange={(e) => setIconScale(parseInt(e.target.value))}
-                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-              />
-            </div>
+            <RangeInput 
+              label={t('icon_depth')}
+              value={iconDepth}
+              min="0.5" max="5.0" step="0.1"
+              suffix="mm"
+              onChange={setIconDepth}
+            />
+            <RangeInput 
+              label="Simge Boyutu"
+              value={iconScale}
+              min="20" max="200" step="5"
+              onChange={setIconScale}
+            />
           </div>
         )}
       </div>
@@ -385,30 +384,20 @@ export const SettingsCard = ({
 
         <div className="flex flex-col gap-5">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('handle_settings')}</label>
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-              <span>{t('handle_height')}</span>
-              <span>{handleHeight.toFixed(0)}mm</span>
-            </div>
-            <input 
-              type="range" min="10" max="60" step="1"
-              value={handleHeight}
-              onChange={(e) => setHandleHeight(parseFloat(e.target.value))}
-              className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-            />
-          </div>
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-              <span>{t('handle_radius')}</span>
-              <span>{handleRadius.toFixed(0)}mm</span>
-            </div>
-            <input 
-              type="range" min="5" max="25" step="1"
-              value={handleRadius}
-              onChange={(e) => setHandleRadius(parseFloat(e.target.value))}
-              className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-            />
-          </div>
+          <RangeInput 
+            label={t('handle_height')}
+            value={handleHeight}
+            min="10" max="60" step="1"
+            suffix="mm"
+            onChange={setHandleHeight}
+          />
+          <RangeInput 
+            label={t('handle_radius')}
+            value={handleRadius}
+            min="5" max="25" step="1"
+            suffix="mm"
+            onChange={setHandleRadius}
+          />
           <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100 transition-colors">
             <div className="relative flex items-center">
               <input 
