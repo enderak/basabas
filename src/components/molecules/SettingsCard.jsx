@@ -338,6 +338,21 @@ export const SettingsCard = ({
             ))}
           </div>
         </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-[11px] font-bold text-slate-500">{t('label_handle_color')}</label>
+          <div className="flex gap-3">
+            {colors.map((color) => (
+              <button
+                key={color.value}
+                onClick={() => setHandleColor(color.value)}
+                className={`w-8 h-8 rounded-full relative transition-transform hover:scale-110 shadow-sm ${
+                  handleColor === color.value ? 'ring-2 ring-offset-2 ring-emerald-500 scale-110' : ''
+                }`}
+                style={{ backgroundColor: color.value }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Taban ve Sap Ayarları */}

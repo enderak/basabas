@@ -478,19 +478,20 @@ export const Scene3D = ({
   }, [selectedShape, baseW, baseD]);
 
   const rimDoubleFrameShape = useMemo(() => {
+    // Daha kalın ve belirgin iki halka
     const outer1 = selectedShape === 'circle'
-      ? createCircleBaseShape(baseW - 0.5, baseD - 0.5)
-      : createRoundedRectShape(baseW - 0.5, baseD - 0.5, Math.min(5, baseW/2, baseD/2));
+      ? createCircleBaseShape(baseW - 1.0, baseD - 1.0)
+      : createRoundedRectShape(baseW - 1.0, baseD - 1.0, Math.min(5, baseW/2, baseD/2));
     const inner1 = selectedShape === 'circle'
-      ? createCircleBaseShape(baseW - 1.5, baseD - 1.5)
-      : createRoundedRectShape(baseW - 1.5, baseD - 1.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 0.5));
+      ? createCircleBaseShape(baseW - 2.5, baseD - 2.5)
+      : createRoundedRectShape(baseW - 2.5, baseD - 2.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 0.7));
     
     const outer2 = selectedShape === 'circle'
-      ? createCircleBaseShape(baseW - 3.0, baseD - 3.0)
-      : createRoundedRectShape(baseW - 3.0, baseD - 3.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1.5));
+      ? createCircleBaseShape(baseW - 4.5, baseD - 4.5)
+      : createRoundedRectShape(baseW - 4.5, baseD - 4.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1.5));
     const inner2 = selectedShape === 'circle'
-      ? createCircleBaseShape(baseW - 4.0, baseD - 4.0)
-      : createRoundedRectShape(baseW - 4.0, baseD - 4.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2));
+      ? createCircleBaseShape(baseW - 6.0, baseD - 6.0)
+      : createRoundedRectShape(baseW - 6.0, baseD - 6.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2.2));
 
     const frame = outer1.clone();
     frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints(128)));
@@ -650,34 +651,36 @@ export const Scene3D = ({
                     })}
                     
                     {rimType === 'dotted' && points.map((p, i) => (
-                      <mesh key={i} position={[p.x * 0.92, p.y * 0.92, 0.5]}>
-                        <sphereGeometry args={[1.0, 12, 12]} />
+                      <mesh key={i} position={[p.x * 0.88, p.y * 0.88, 0.5]}>
+                        <sphereGeometry args={[1.4, 16, 16]} />
                         <meshStandardMaterial color={materialColor} />
                       </mesh>
                     ))}
 
                     {rimType === 'scalloped' && points.map((p, i) => (
-                      <mesh key={i} position={[p.x * 0.98, p.y * 0.98, 0.5]}>
-                        <cylinderGeometry args={[2.5, 2.5, 1.2, 16]} />
+                      <mesh key={i} position={[p.x * 0.94, p.y * 0.94, 0.5]}>
+                        <cylinderGeometry args={[2.0, 2.0, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                         <meshStandardMaterial color={materialColor} />
                       </mesh>
                     ))}
 
                     {rimType === 'zigzag' && points.map((p, i) => {
-                      const offset = i % 2 === 0 ? 1.05 : 0.9;
+                      // Zigzag içeri doğru hareket etsin (taşmasın)
+                      const offset = i % 2 === 0 ? 0.94 : 0.82;
                       return (
                         <mesh key={i} position={[p.x * offset, p.y * offset, 0.5]}>
-                          <boxGeometry args={[1.5, 1.5, 1.5]} />
+                          <boxGeometry args={[2, 2, textDepth]} />
                           <meshStandardMaterial color={materialColor} />
                         </mesh>
                       );
                     })}
 
                     {rimType === 'wave' && points.map((p, i) => {
-                      const z = Math.sin((i/rimCount) * Math.PI * 2 * 10) * 1.0;
+                      const wave = Math.sin((i/rimCount) * Math.PI * 2 * 12) * 0.08;
+                      const offset = 0.88 + wave;
                       return (
-                        <mesh key={i} position={[p.x * 0.95, p.y * 0.95, 0.5 + z]}>
-                          <sphereGeometry args={[0.8, 12, 12]} />
+                        <mesh key={i} position={[p.x * offset, p.y * offset, 0.5]}>
+                          <boxGeometry args={[1.8, 1.8, textDepth]} />
                           <meshStandardMaterial color={materialColor} />
                         </mesh>
                       );
