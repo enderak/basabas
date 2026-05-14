@@ -507,16 +507,47 @@ export const Scene3D = ({
     const outer2 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 4.5, baseD - 4.5)
       : createRoundedRectShape(baseW - 4.5, baseD - 4.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1.5));
-    const inner2 = selectedShape === 'circle'
-      ? createCircleBaseShape(baseW - 6.0, baseD - 6.0)
-      : createRoundedRectShape(baseW - 6.0, baseD - 6.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2.2));
-
-    const frame = outer1.clone();
-    frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints(128)));
-    frame.holes.push(new THREE.Path().setFromPoints(outer2.getPoints(128)));
     frame.holes.push(new THREE.Path().setFromPoints(inner2.getPoints(128)));
     return frame;
   }, [selectedShape, baseW, baseD]);
+
+  const rimPalaceShape = useMemo(() => {
+    // Resimdeki Saray Çerçevesi (Palace Frame)
+    const radius = Math.min(baseW, baseD) / 2 - 1.5;
+    const outer = new THREE.Shape();
+    outer.absarc(0, 0, radius, 0, Math.PI * 2, false);
+    
+    const inner1 = new THREE.Shape();
+    inner1.absarc(0, 0, radius - 1.2, 0, Math.PI * 2, true);
+    
+    // Orta boşluk (Groove)
+    const grooveOuter = new THREE.Shape();
+    grooveOuter.absarc(0, 0, radius - 2.5, 0, Math.PI * 2, false);
+    
+    // Scalloped inner edge
+    const scallopInner = new THREE.Shape();
+    const segments = 180;
+    const peaks = 16;
+    const rBase = radius - 4.5;
+    const rAmp = 1.8;
+    
+    for (let i = 0; i <= segments; i++) {
+      const theta = (i / segments) * Math.PI * 2;
+      // Scallop effect: smooth bumps with sharp valleys
+      const wave = Math.pow(Math.abs(Math.sin(theta * peaks / 2)), 0.5) * rAmp;
+      const r = rBase + wave;
+      const x = Math.cos(theta) * r;
+      const y = Math.sin(theta) * r;
+      if (i === 0) scallopInner.moveTo(x, y);
+      else scallopInner.lineTo(x, y);
+    }
+    
+    const frame = outer.clone();
+    frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints(128)));
+    frame.holes.push(new THREE.Path().setFromPoints(grooveOuter.getPoints(128)));
+    frame.holes.push(new THREE.Path().setFromPoints(scallopInner.getPoints(segments)));
+    return frame;
+  }, [baseW, baseD]);
 
 
 
@@ -719,6 +750,12 @@ export const Scene3D = ({
                           </mesh>
                         ))}
                       </>
+                    )}
+                    {rimType === 'palace' && (
+                      <mesh position={[0, 0, textDepth / 2]}>
+                        <extrudeGeometry args={[rimPalaceShape, { depth: textDepth, bevelEnabled: false, curveSegments: 64 }]} />
+                        <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                      </mesh>
                     )}
                   </>
                 );

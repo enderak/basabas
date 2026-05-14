@@ -396,6 +396,7 @@ export const SettingsCard = ({
             <option value="zigzag">{t('rim_zigzag')}</option>
             <option value="wave">{t('rim_wave')}</option>
             <option value="double_dotted">{t('rim_double_dotted')}</option>
+            <option value="palace">{t('rim_palace')}</option>
           </select>
         </div>
 
