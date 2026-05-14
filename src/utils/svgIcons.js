@@ -395,31 +395,36 @@ export function createOrnamentShape(size = 24) {
 }
 
 /**
- * Defne Yaprağı (Daphne / Laurel Leaf) - Çiftli ve daha zarif
+ * Defne Yaprağı (Daphne / Laurel Leaf) - Daha dolgun ve mühüre uygun
  */
 export function createDaphneLeafShape(size = 24) {
   const s = size / 2;
   const shapes = [];
   
-  const drawLeaf = (angle, offset) => {
-    const leaf = new THREE.Shape();
-    const x = Math.cos(angle) * offset;
-    const y = Math.sin(angle) * offset;
-    leaf.ellipse(x, y, s * 0.7, s * 0.25, 0, Math.PI * 2, false, angle);
-    shapes.push(leaf);
-  };
-
-  drawLeaf(Math.PI / 4, s * 0.4);
-  drawLeaf(-Math.PI / 4, s * 0.4);
-  
-  // Stem
+  // Orta dal
   const stem = new THREE.Shape();
-  stem.moveTo(0, -s * 0.8);
-  stem.lineTo(0, s * 0.2);
-  stem.lineTo(s * 0.1, s * 0.2);
-  stem.lineTo(s * 0.1, -s * 0.8);
+  stem.moveTo(0, -s * 0.9);
+  stem.lineTo(0, s * 0.4);
+  stem.lineTo(s * 0.08, s * 0.4);
+  stem.lineTo(s * 0.08, -s * 0.9);
   stem.closePath();
   shapes.push(stem);
+
+  // Yaprak çiftleri (daha fazla ve sık)
+  const drawLeafPair = (y, scale) => {
+    const leafL = new THREE.Shape();
+    leafL.ellipse(-s * 0.35 * scale, y, s * 0.5 * scale, s * 0.2 * scale, 0, Math.PI * 2, false, Math.PI / 6);
+    shapes.push(leafL);
+    
+    const leafR = new THREE.Shape();
+    leafR.ellipse(s * 0.35 * scale, y, s * 0.5 * scale, s * 0.2 * scale, 0, Math.PI * 2, false, -Math.PI / 6);
+    shapes.push(leafR);
+  };
+
+  drawLeafPair(s * 0.3, 0.7);
+  drawLeafPair(0, 0.9);
+  drawLeafPair(-s * 0.3, 1.0);
+  drawLeafPair(-s * 0.6, 0.8);
   
   return shapes;
 }

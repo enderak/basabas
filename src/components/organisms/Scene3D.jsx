@@ -683,22 +683,22 @@ export const Scene3D = ({
                     ))}
 
                     {rimType === 'zigzag' && points.map((p, i) => {
-                      // Zigzag içeri doğru hareket etsin (taşmasın)
-                      const offset = i % 2 === 0 ? 0.94 : 0.82;
+                      // Çok daha hafif zikzak, kenarda kalacak şekilde
+                      const offset = i % 2 === 0 ? 0.98 : 0.92;
                       return (
-                        <mesh key={i} position={[p.x * offset, p.y * offset, 0.5]}>
-                          <boxGeometry args={[2, 2, textDepth]} />
+                        <mesh key={i} position={[p.x * offset, p.y * offset, textDepth / 2]}>
+                          <boxGeometry args={[1.5, 1.5, textDepth]} rotation={[0, 0, Math.atan2(p.y, p.x)]} />
                           <meshStandardMaterial color={materialColor} />
                         </mesh>
                       );
                     })}
 
                     {rimType === 'wave' && points.map((p, i) => {
-                      const wave = Math.sin((i/rimCount) * Math.PI * 2 * 12) * 0.08;
-                      const offset = 0.88 + wave;
+                      const wave = Math.sin((i/rimCount) * Math.PI * 2 * 10) * 0.03;
+                      const offset = 0.95 + wave;
                       return (
-                        <mesh key={i} position={[p.x * offset, p.y * offset, 0.5]}>
-                          <boxGeometry args={[1.8, 1.8, textDepth]} />
+                        <mesh key={i} position={[p.x * offset, p.y * offset, textDepth / 2]}>
+                          <boxGeometry args={[1.5, 1.5, textDepth]} rotation={[0, 0, Math.atan2(p.y, p.x)]} />
                           <meshStandardMaterial color={materialColor} />
                         </mesh>
                       );
