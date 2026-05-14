@@ -253,9 +253,9 @@ export const Scene3D = ({
   // Vida (Thread) yolu için sarmal (helix) oluşturma
   const threadCurve = useMemo(() => {
     const pts = [];
-    const radius = 3.9; // M8 vida için yaklaşık yarıçap
-    const height = baseH + 6;  // Tabla kalınlığına göre dinamik boy
-    const turns = 10;   // Diş sayısı
+    const radius = 3.9;
+    const height = Math.max(8, baseH - 2); 
+    const turns = Math.max(4, Math.floor(height / 1.2));
     for (let i = 0; i <= 150; i++) {
       const t = i / 150;
       const angle = t * Math.PI * 2 * turns;
@@ -421,8 +421,8 @@ export const Scene3D = ({
   if (hasIconTop) actualContentW = Math.max(actualContentW, iconTopRealSize);
   if (hasIconBottom) actualContentW = Math.max(actualContentW, iconBottomRealSize);
 
-  let baseW = actualContentW + 40; // Padding artırıldı (32 -> 40)
-  let baseD = totalContentDepth + 40;
+  let baseW = actualContentW + 60; // Padding daha da artırıldı (40 -> 60)
+  let baseD = totalContentDepth + 60;
 
   // Daire ise kare tabanlı bir daire oluştur
   if (selectedShape === 'circle') {
@@ -669,8 +669,8 @@ export const Scene3D = ({
                     })}
                     
                     {rimType === 'dotted' && points.map((p, i) => (
-                      <mesh key={i} position={[p.x * 0.88, p.y * 0.88, 0.5]}>
-                        <sphereGeometry args={[1.4, 16, 16]} />
+                      <mesh key={i} position={[p.x * 0.92, p.y * 0.92, textDepth / 2]}>
+                        <cylinderGeometry args={[1.2, 1.2, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                         <meshStandardMaterial color={materialColor} />
                       </mesh>
                     ))}
@@ -704,17 +704,17 @@ export const Scene3D = ({
                       );
                     })}
 
-                    {rimType === 'double_dotted' && (
+                {rimType === 'double_dotted' && (
                       <>
                         {points.map((p, i) => (
-                          <mesh key={`d1-${i}`} position={[p.x * 0.94, p.y * 0.94, 0.5]}>
-                            <sphereGeometry args={[0.9, 12, 12]} />
+                          <mesh key={`d1-${i}`} position={[p.x * 0.94, p.y * 0.94, textDepth / 2]}>
+                            <cylinderGeometry args={[0.8, 0.8, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                             <meshStandardMaterial color={materialColor} />
                           </mesh>
                         ))}
                         {points.map((p, i) => (
-                          <mesh key={`d2-${i}`} position={[p.x * 0.86, p.y * 0.86, 0.5]}>
-                            <sphereGeometry args={[0.9, 12, 12]} />
+                          <mesh key={`d2-${i}`} position={[p.x * 0.88, p.y * 0.88, textDepth / 2]}>
+                            <cylinderGeometry args={[0.8, 0.8, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                             <meshStandardMaterial color={materialColor} />
                           </mesh>
                         ))}
@@ -737,8 +737,8 @@ export const Scene3D = ({
             {isHandleRemovable && (
               <group position={[0, 0, 0]} rotation={[Math.PI, 0, 0]}>
                 {/* Vida Ana Gövdesi (Core) */}
-                <mesh position={[0, (baseH + 6) / 2, 0]}>
-                  <cylinderGeometry args={[3.4, 3.4, baseH + 6, 32]} />
+                <mesh position={[0, Math.max(8, baseH - 2) / 2, 0]}>
+                  <cylinderGeometry args={[3.4, 3.4, Math.max(8, baseH - 2), 32]} />
                   <meshStandardMaterial color={handleColor || '#334155'} roughness={0.7} metalness={0.3} />
                 </mesh>
                 {/* Sarmal Vida Dişleri (Threads - Yiv ve Set) */}
