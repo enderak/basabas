@@ -669,7 +669,7 @@ export const Scene3D = ({
                     })}
                     
                     {rimType === 'dotted' && points.map((p, i) => (
-                      <mesh key={i} position={[p.x * 0.92, p.y * 0.92, textDepth / 2]}>
+                      <mesh key={i} position={[p.x * 0.97, p.y * 0.97, textDepth / 2]}>
                         <cylinderGeometry args={[1.2, 1.2, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                         <meshStandardMaterial color={materialColor} />
                       </mesh>
@@ -707,13 +707,13 @@ export const Scene3D = ({
                 {rimType === 'double_dotted' && (
                       <>
                         {points.map((p, i) => (
-                          <mesh key={`d1-${i}`} position={[p.x * 0.94, p.y * 0.94, textDepth / 2]}>
+                          <mesh key={`d1-${i}`} position={[p.x * 0.98, p.y * 0.98, textDepth / 2]}>
                             <cylinderGeometry args={[0.8, 0.8, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                             <meshStandardMaterial color={materialColor} />
                           </mesh>
                         ))}
                         {points.map((p, i) => (
-                          <mesh key={`d2-${i}`} position={[p.x * 0.88, p.y * 0.88, textDepth / 2]}>
+                          <mesh key={`d2-${i}`} position={[p.x * 0.94, p.y * 0.94, textDepth / 2]}>
                             <cylinderGeometry args={[0.8, 0.8, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                             <meshStandardMaterial color={materialColor} />
                           </mesh>
