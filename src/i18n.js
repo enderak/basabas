@@ -4,9 +4,9 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   TR: {
     translation: {
-      "title": "SAKRAD SABUN İSTAMPA ÜRETİCİ",
-      "settings_title": "İstampa Ayarları",
-      "settings_desc": "Sabun mührünüzü kişiselleştirin",
+      "title": "SAKRAD MÜHÜR JENERATÖRÜ",
+      "settings_title": "Mühür Ayarları",
+      "settings_desc": "3D mühür tasarımınızı kişiselleştirin",
       "language": "Dil",
       "label_text": "Ana Metin",
       "mid_text": "Orta Metin",
@@ -100,9 +100,9 @@ const resources = {
   },
   EN: {
     translation: {
-      "title": "SAKRAD SOAP STAMP GENERATOR",
-      "settings_title": "Stamp Settings",
-      "settings_desc": "Customize your 3D soap stamp",
+      "title": "SAKRAD SEAL GENERATOR",
+      "settings_title": "Seal Settings",
+      "settings_desc": "Customize your 3D seal design",
       "language": "Language",
       "label_text": "Main Text",
       "mid_text": "Middle Text",
@@ -123,7 +123,7 @@ const resources = {
       "shape_circle": "Circle",
       "app_mode": "App Mode",
       "mode_keychain": "Keychain",
-      "mode_stamp": "Soap Stamp",
+      "mode_stamp": "Mühür (Mühür)",
       "is_mirrored": "Mirror Text (For Stamp)",
       "handle_settings": "Handle Settings",
       "handle_height": "Handle Height",
