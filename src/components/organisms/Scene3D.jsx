@@ -236,7 +236,7 @@ export const Scene3D = ({
   const [customSvgShape, setCustomSvgShape] = useState(null);
   
   useMemo(() => {
-    if (iconType === 'custom' && customSvgUrl) {
+    if (iconTopType === 'custom' && customSvgUrl) {
       const loader = new SVGLoader();
       const svgData = loader.parse(atob(customSvgUrl.split(',')[1]));
       const paths = svgData.paths;
@@ -289,7 +289,7 @@ export const Scene3D = ({
     } else {
       setCustomSvgShape(null);
     }
-  }, [iconType, customSvgUrl, letterSize]);
+  }, [iconTopType, customSvgUrl, letterSizeMain]);
 
   const iconShapeTop = useMemo(() => {
     if (iconTopType === 'none') return null;
