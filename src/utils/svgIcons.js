@@ -395,6 +395,36 @@ export function createOrnamentShape(size = 24) {
 }
 
 /**
+ * Defne Yaprağı (Daphne / Laurel Leaf) - Çiftli ve daha zarif
+ */
+export function createDaphneLeafShape(size = 24) {
+  const s = size / 2;
+  const shapes = [];
+  
+  const drawLeaf = (angle, offset) => {
+    const leaf = new THREE.Shape();
+    const x = Math.cos(angle) * offset;
+    const y = Math.sin(angle) * offset;
+    leaf.ellipse(x, y, s * 0.7, s * 0.25, 0, Math.PI * 2, false, angle);
+    shapes.push(leaf);
+  };
+
+  drawLeaf(Math.PI / 4, s * 0.4);
+  drawLeaf(-Math.PI / 4, s * 0.4);
+  
+  // Stem
+  const stem = new THREE.Shape();
+  stem.moveTo(0, -s * 0.8);
+  stem.lineTo(0, s * 0.2);
+  stem.lineTo(s * 0.1, s * 0.2);
+  stem.lineTo(s * 0.1, -s * 0.8);
+  stem.closePath();
+  shapes.push(stem);
+  
+  return shapes;
+}
+
+/**
  * Yaprak (Single Leaf)
  */
 export function createLeafShape(size = 24) {
@@ -453,6 +483,7 @@ export function createIconShape(type, size = 24) {
     case 'olive_detailed': return createOliveDetailedShape(size);
     case 'ornament': return createOrnamentShape(size);
     case 'leaf': return createLeafShape(size);
+    case 'daphne': return createDaphneLeafShape(size);
     case 'divider': return createDividerShape(size);
     default: return null;
   }

@@ -256,6 +256,7 @@ export const SettingsCard = ({
             <option value="clover">{t('icon_clover')} 🍀</option>
             <option value="star_crescent">{t('icon_star_crescent')} 🌙</option>
             <option value="heart">{t('icon_heart')} ❤️</option>
+            <option value="daphne">{t('icon_daphne')} 🌿</option>
             <option value="custom">{t('icon_custom')} 📁</option>
           </select>
         </div>

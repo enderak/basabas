@@ -95,6 +95,7 @@ const resources = {
       "icon_olive_detailed": "Zeytinli Zeytin Dalı",
       "icon_ornament": "Süsleme",
       "icon_leaf": "Yaprak",
+      "icon_daphne": "Defne Yaprağı",
       "has_divider": "Desenli Ayraç"
     }
   },
@@ -161,6 +162,7 @@ const resources = {
       "icon_olive_detailed": "Detailed Olive Branch",
       "icon_ornament": "Ornament",
       "icon_leaf": "Leaf",
+      "icon_daphne": "Daphne Leaf",
       "has_divider": "Patterned Divider",
       "icon_position": "Icon Position",
       "icon_pos_left": "Left",

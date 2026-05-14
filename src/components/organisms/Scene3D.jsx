@@ -254,7 +254,7 @@ export const Scene3D = ({
   const threadCurve = useMemo(() => {
     const pts = [];
     const radius = 3.9; // M8 vida için yaklaşık yarıçap
-    const height = 12;  // Vida boyu
+    const height = baseH + 6;  // Tabla kalınlığına göre dinamik boy
     const turns = 10;   // Diş sayısı
     for (let i = 0; i <= 150; i++) {
       const t = i / 150;
@@ -421,8 +421,8 @@ export const Scene3D = ({
   if (hasIconTop) actualContentW = Math.max(actualContentW, iconTopRealSize);
   if (hasIconBottom) actualContentW = Math.max(actualContentW, iconBottomRealSize);
 
-  let baseW = actualContentW + 32; // Padding artırıldı
-  let baseD = totalContentDepth + 32;
+  let baseW = actualContentW + 40; // Padding artırıldı (32 -> 40)
+  let baseD = totalContentDepth + 40;
 
   // Daire ise kare tabanlı bir daire oluştur
   if (selectedShape === 'circle') {
@@ -720,8 +720,8 @@ export const Scene3D = ({
             {isHandleRemovable && (
               <group position={[0, 0, 0]} rotation={[Math.PI, 0, 0]}>
                 {/* Vida Ana Gövdesi (Core) */}
-                <mesh position={[0, 6, 0]}>
-                  <cylinderGeometry args={[3.4, 3.4, 12, 32]} />
+                <mesh position={[0, (baseH + 6) / 2, 0]}>
+                  <cylinderGeometry args={[3.4, 3.4, baseH + 6, 32]} />
                   <meshStandardMaterial color={handleColor || '#334155'} roughness={0.7} metalness={0.3} />
                 </mesh>
                 {/* Sarmal Vida Dişleri (Threads - Yiv ve Set) */}
