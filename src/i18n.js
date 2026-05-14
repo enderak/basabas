@@ -88,7 +88,14 @@ const resources = {
       "export_multi": "Çift Renk (AMS) STL İndir",
       "ams_tip_title": "Çoklu Renk (AMS) Baskı",
       "ams_tip": "İndirdiğiniz ZIP dosyasındaki iki parçayı Bambu Studio'ya aynı anda sürükleyin. 'Tek obje olarak yüklensin mi?' sorusuna EVET deyin. Sol taraftaki Objeler (Objects) panelinden parçalara sağ tıklayıp farklı renk (flament) atayabilirsiniz.",
-      "ignore_cantilever": "⚠️ Not: Bambu Studio'da 'Yüzen konsol var' (Floating cantilever) uyarısı alırsanız endişelenmeyin! Bu bir hata değildir; 'T' ve 'E' gibi yatay kollara sahip harflerin doğası gereği altının boş olmasından kaynaklanır. Uyarıyı yoksayıp basabilir veya dilerseniz 'Destek (Support)' açarak yazdırabilirsiniz."
+      "ignore_cantilever": "⚠️ Not: Bambu Studio'da 'Yüzen konsol var' (Floating cantilever) uyarısı alırsanız endişelenmeyin! Bu bir hata değildir; 'T' ve 'E' gibi yatay kollara sahip harflerin doğası gereği altının boş olmasından kaynaklanır. Uyarıyı yoksayıp basabilir veya dilerseniz 'Destek (Support)' açarak yazdırabilirsiniz.",
+      "text_sizes": "METİN BOYUTLARI",
+      "icon_top": "Üst Simge",
+      "icon_bottom": "Alt Simge",
+      "icon_olive_detailed": "Zeytinli Dal",
+      "icon_ornament": "Süsleme",
+      "icon_leaf": "Yaprak",
+      "has_divider": "Desenli Ayraç"
     }
   },
   EN: {
@@ -148,6 +155,13 @@ const resources = {
       "rim_wave": "Wave Trace",
       "icon_depth": "Logo Depth",
       "icon_custom": "Custom SVG",
+      "text_sizes": "TEXT SIZES",
+      "icon_top": "Top Icon",
+      "icon_bottom": "Bottom Icon",
+      "icon_olive_detailed": "Olive with Fruits",
+      "icon_ornament": "Ornament",
+      "icon_leaf": "Leaf",
+      "has_divider": "Patterned Divider",
       "icon_position": "Icon Position",
       "icon_pos_left": "Left",
       "icon_pos_top": "Top",

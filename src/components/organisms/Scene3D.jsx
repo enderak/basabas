@@ -141,7 +141,8 @@ export const Scene3D = ({
   midText,
   phoneText,
   fontFamily,
-  iconType,
+  iconTopType,
+  iconBottomType,
   customSvgUrl,
   iconPosition,
   isItalic,
@@ -151,7 +152,10 @@ export const Scene3D = ({
   baseColor,
   handleColor,
   baseShape: selectedShape,
-  textScale,
+  textScaleMain,
+  textScaleMid,
+  textScaleSub,
+  hasDivider,
   textOffset,
   autoCenter,
   baseHeight,
@@ -188,9 +192,10 @@ export const Scene3D = ({
     }
   }, [phoneText]);
 
-  const scaleRatio = (textScale || 100) / 100.0;
-  const letterSize = 30.0 * scaleRatio;         
-  const phoneLetterSize = 18.0 * scaleRatio; // Telefon numarası daha küçük olsun
+  const letterSizeMain = 30.0 * (textScaleMain / 100.0);
+  const letterSizeMid = 30.0 * (textScaleMid / 100.0);
+  const letterSizeSub = 30.0 * (textScaleSub / 100.0);
+  const phoneLetterSize = 18.0; 
   const baseH = baseHeight;        
 
   const hasMidText = midText && midText.trim().length > 0;
@@ -286,58 +291,87 @@ export const Scene3D = ({
     }
   }, [iconType, customSvgUrl, letterSize]);
 
-  const iconShape = useMemo(() => {
-    if (iconType === 'none') return null;
-    if (iconType === 'custom') return customSvgShape;
-    return createIconShape(iconType, letterSize);
-  }, [iconType, letterSize, customSvgShape]);
+  const iconShapeTop = useMemo(() => {
+    if (iconTopType === 'none') return null;
+    if (iconTopType === 'custom') return customSvgShape;
+    return createIconShape(iconTopType, letterSizeMain);
+  }, [iconTopType, letterSizeMain, customSvgShape]);
 
-  const hasIcon = iconShape !== null;
-  const iconSpacing = 8.0; // Spacing increased from 2.0 to 8.0
-  const iconRealSize = hasIcon ? (letterSize * iconScale) : 0;
+  const iconShapeBottom = useMemo(() => {
+    if (iconBottomType === 'none') return null;
+    return createIconShape(iconBottomType, letterSizeMain * 0.8);
+  }, [iconBottomType, letterSizeMain]);
+
+  const dividerShape = useMemo(() => {
+    if (!hasDivider) return null;
+    return createIconShape('divider', letterSizeMain * 2.5);
+  }, [hasDivider, letterSizeMain]);
+
+  const hasIconTop = iconShapeTop !== null;
+  const hasIconBottom = iconShapeBottom !== null;
+  const iconSpacing = 8.0; 
+  const iconTopRealSize = hasIconTop ? (letterSizeMain * iconScale / 100) : 0;
+  const iconBottomRealSize = hasIconBottom ? (letterSizeMain * 0.8 * iconScale / 100) : 0;
 
 
 
   // VERTICAL LAYOUT (Z-axis in 3D)
-  const lineSpacing = letterSize * 1.3;
   let currentZ = 0;
   
-  let iconZ = 0;
+  let iconTopZ = 0;
   let textMainZ = 0;
+  let dividerZ = 0;
   let textMidZ = 0;
   let textSubZ = 0;
+  let iconBottomZ = 0;
 
-  if (hasIcon && iconPosition === 'top') {
-    iconZ = currentZ + iconRealSize / 2;
-    currentZ += iconRealSize + iconSpacing;
+  // 1. Top Icon
+  if (hasIconTop) {
+    iconTopZ = currentZ + iconTopRealSize / 2;
+    currentZ += iconTopRealSize + iconSpacing;
   }
 
-  textMainZ = currentZ + letterSize / 2;
-  currentZ += letterSize;
+  // 2. Main Text
+  textMainZ = currentZ + letterSizeMain / 2;
+  currentZ += letterSizeMain;
 
+  // 3. Divider
+  if (hasDivider) {
+    currentZ += iconSpacing * 0.5;
+    dividerZ = currentZ + 2; // thin divider
+    currentZ += 4 + iconSpacing * 0.5;
+  }
+
+  // 4. Middle Text
   if (hasMidText) {
-    currentZ += (lineSpacing - letterSize);
-    textMidZ = currentZ + letterSize / 2;
-    currentZ += letterSize;
+    if (!hasDivider) currentZ += iconSpacing * 0.5;
+    textMidZ = currentZ + letterSizeMid / 2;
+    currentZ += letterSizeMid;
   }
 
+  // 5. Bottom Text
   if (hasSubText) {
-    currentZ += (lineSpacing - letterSize); // gap
-    textSubZ = currentZ + letterSize / 2;
-    currentZ += letterSize;
+    currentZ += iconSpacing * 0.3;
+    textSubZ = currentZ + letterSizeSub / 2;
+    currentZ += letterSizeSub;
+  }
+
+  // 6. Bottom Icon
+  if (hasIconBottom) {
+    currentZ += iconSpacing * 0.8;
+    iconBottomZ = currentZ + iconBottomRealSize / 2;
+    currentZ += iconBottomRealSize;
   }
 
   const totalContentDepth = currentZ;
   const zOffset = -totalContentDepth / 2;
 
-  if (hasIcon && (iconPosition === 'left' || iconPosition === 'right')) {
-    iconZ = totalContentDepth / 2;
-  }
-
-  iconZ += zOffset;
+  iconTopZ += zOffset;
   textMainZ += zOffset;
+  dividerZ += zOffset;
   textMidZ += zOffset;
   textSubZ += zOffset;
+  iconBottomZ += zOffset;
 
   // HORIZONTAL LAYOUT (X-axis)
   const isLeft = false;
@@ -347,21 +381,13 @@ export const Scene3D = ({
   const pTop = 12.0;
   const pBottom = 12.0;
 
-  const estimatedWidth = (text?.length || 0) * letterSize * 0.6;
-  const maxTextWidth = Math.max(textSizeMain[0], textSizeMid[0], textSizeSub[0]) || estimatedWidth;
-  const textBlockWidth = maxTextWidth;
-  let actualContentW = textBlockWidth;
-  
-  if (hasIcon) {
-    if (iconPosition === 'top') {
-      actualContentW = Math.max(actualContentW, iconRealSize);
-    } else {
-      actualContentW = textBlockWidth + (iconSpacing * 1.5) + iconRealSize;
-    }
-  }
+  const maxTextWidth = Math.max(textSizeMain[0], textSizeMid[0], textSizeSub[0]) || 60;
+  let actualContentW = maxTextWidth;
+  if (hasIconTop) actualContentW = Math.max(actualContentW, iconTopRealSize);
+  if (hasIconBottom) actualContentW = Math.max(actualContentW, iconBottomRealSize);
 
-  let baseW = actualContentW + pLeft + pRight;
-  let baseD = totalContentDepth + pTop + pBottom;
+  let baseW = actualContentW + 24; // Padding
+  let baseD = totalContentDepth + 24;
 
   if (selectedShape === 'teardrop') {
     baseW += (10.0 * scaleRatio);
@@ -684,14 +710,33 @@ export const Scene3D = ({
             scale={[isMirrored ? -1 : 1, 1, 1]}
             position={[0, 0, 0]}
           >
+          {/* ÜST SİMGE */}
+          {hasIconTop && (
+             <group position={[0, iconTopZ, textDepth/2]} rotation={[-Math.PI / 2, 0, 0]}>
+               {Array.isArray(iconShapeTop) ? (
+                 iconShapeTop.map((s, i) => (
+                   <mesh key={i}>
+                     <extrudeGeometry args={[s, { depth: textDepth, bevelEnabled: false }]} />
+                     <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                   </mesh>
+                 ))
+               ) : (
+                 <mesh>
+                   <extrudeGeometry args={[iconShapeTop, { depth: textDepth, bevelEnabled: false }]} />
+                   <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                 </mesh>
+               )}
+             </group>
+          )}
+
           {/* ANA METİN */}
           {text && text.trim().length > 0 && (
             <Text3D
               name="TextMain"
-              key={`main-${text}-${textDepth}-${baseHeight}-${scaleRatio}-${hasSubText}-${isItalic}-${fontFamily}-${hasIcon}-${isMirrored}`}
+              key={`main-${text}-${textDepth}-${baseHeight}-${textScaleMain}-${isItalic}-${fontFamily}-${isMirrored}`}
               font={fontPath}
-              size={letterSize}
-              height={textDepth} // textDepth kullanılıyor
+              size={letterSizeMain}
+              height={textDepth} 
               curveSegments={16}
               bevelEnabled={false}
               onUpdate={(self) => processTextGeometry(self, setTextSizeMain, textMainZ)}
@@ -701,13 +746,25 @@ export const Scene3D = ({
             </Text3D>
           )}
 
+          {/* AYRAÇ ÇİZGİSİ */}
+          {hasDivider && dividerShape && (
+            <group position={[0, dividerZ, textDepth/2]} rotation={[-Math.PI / 2, 0, 0]}>
+               {dividerShape.map((s, i) => (
+                 <mesh key={i}>
+                   <extrudeGeometry args={[s, { depth: textDepth, bevelEnabled: false }]} />
+                   <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                 </mesh>
+               ))}
+            </group>
+          )}
+
           {/* ORTA METİN */}
           {hasMidText && (
             <Text3D
               name="TextMid"
-              key={`mid-${midText}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${fontFamily}-${hasIcon}-${isMirrored}`}
+              key={`mid-${midText}-${textDepth}-${baseHeight}-${textScaleMid}-${isItalic}-${fontFamily}-${isMirrored}`}
               font={fontPath}
-              size={letterSize}
+              size={letterSizeMid}
               height={textDepth} 
               curveSegments={16}
               bevelEnabled={false}
@@ -718,13 +775,13 @@ export const Scene3D = ({
             </Text3D>
           )}
 
-          {/* ALT METİN (Opsiyonel) */}
+          {/* ALT METİN */}
           {hasSubText && (
             <Text3D
               name="TextSub"
-              key={`sub-${subText}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${fontFamily}-${hasIcon}-${isMirrored}`}
+              key={`sub-${subText}-${textDepth}-${baseHeight}-${textScaleSub}-${isItalic}-${fontFamily}-${isMirrored}`}
               font={fontPath}
-              size={letterSize}
+              size={letterSizeSub}
               height={textDepth} 
               curveSegments={16}
               bevelEnabled={false}
@@ -735,38 +792,23 @@ export const Scene3D = ({
             </Text3D>
           )}
 
-
-
-
-          {/* SİMGE (ICON) */}
-          {hasIcon && (
-            Array.isArray(iconShape) ? (
-              <group
-                key={`icon-${iconType}-${textDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${iconPosition}-${letterSize}-${isMirrored}`}
-                name="TextIconGroup"
-                position={[iconX, baseH, iconZ]}
-                rotation={[-Math.PI / 2, 0, 0]}
-                scale={[iconScale, iconScale, 1]}
-              >
-                {iconShape.map((shape, idx) => (
-                  <mesh key={idx} name={`TextIcon_${idx}`}>
-                    <extrudeGeometry args={[shape, { depth: iconDepth, bevelEnabled: false }]} />
-                    <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-                  </mesh>
-                ))}
-              </group>
-            ) : (
-              <mesh 
-                key={`icon-${iconType}-${iconDepth}-${baseHeight}-${scaleRatio}-${isItalic}-${iconPosition}-${letterSize}-${isMirrored}`}
-                name="TextIcon"
-                position={[iconX, baseH, iconZ]}
-                rotation={[-Math.PI / 2, 0, 0]}
-                scale={[iconScale, iconScale, 1]}
-              >
-                <extrudeGeometry args={[iconShape, { depth: iconDepth, bevelEnabled: false }]} />
-                <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
-              </mesh>
-            )
+          {/* ALT SİMGE */}
+          {hasIconBottom && (
+             <group position={[0, iconBottomZ, textDepth/2]} rotation={[-Math.PI / 2, 0, 0]}>
+               {Array.isArray(iconShapeBottom) ? (
+                 iconShapeBottom.map((s, i) => (
+                   <mesh key={i}>
+                     <extrudeGeometry args={[s, { depth: textDepth, bevelEnabled: false }]} />
+                     <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                   </mesh>
+                 ))
+               ) : (
+                 <mesh>
+                   <extrudeGeometry args={[iconShapeBottom, { depth: textDepth, bevelEnabled: false }]} />
+                   <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
+                 </mesh>
+               )}
+             </group>
           )}
           </group>
         </group>

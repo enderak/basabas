@@ -326,58 +326,114 @@ export function createILoveShape(size = 24) {
 }
 
 /**
- * Zeytin Dalı (Olive Branch) şekli oluşturur
- * @param {number} size - Toplam boyut
- * @returns {THREE.Shape[]}
+ * Detaylı Zeytin Dalı (Olive Branch with multiple olives)
  */
-export function createOliveShape(size = 24) {
+export function createOliveDetailedShape(size = 24) {
   const s = size / 2;
   const shapes = [];
   
-  // 1. Dal (Stem) - Yay şeklinde
+  // 1. Ana Dal (Main Stem)
   const stem = new THREE.Shape();
-  const stemW = s * 0.08;
-  stem.moveTo(-s * 0.9, -s * 0.3);
-  stem.quadraticCurveTo(0, s * 0.7, s * 0.9, -s * 0.3);
-  stem.lineTo(s * 0.9, -s * (0.3 + stemW));
-  stem.quadraticCurveTo(0, s * (0.7 - stemW), -s * 0.9, -s * (0.3 + stemW));
+  stem.moveTo(-s * 0.9, -s * 0.4);
+  stem.quadraticCurveTo(0, s * 0.6, s * 0.9, -s * 0.3);
+  stem.lineTo(s * 0.88, -s * 0.35);
+  stem.quadraticCurveTo(0, s * 0.55, -s * 0.92, -s * 0.45);
   stem.closePath();
   shapes.push(stem);
   
-  // 2. Yapraklar (Leaves)
-  const leafCount = 7;
-  for (let i = 0; i < leafCount; i++) {
-    const t = i / (leafCount - 1);
+  // 2. Yapraklar
+  const leafAngles = [-0.6, -0.4, -0.2, 0.1, 0.3, 0.5, 0.7];
+  leafAngles.forEach((angle, i) => {
+    const t = i / (leafAngles.length - 1);
     const x = -s * 0.8 + (s * 1.6) * t;
-    const y = (1 - Math.pow(t * 2 - 1, 2)) * s * 0.5 + s * 0.1;
+    const y = (1 - Math.pow(t * 2 - 1, 2)) * s * 0.4 + s * 0.1;
     
     const leaf = new THREE.Shape();
-    const leafW = s * 0.28;
-    const leafH = s * 0.12;
-    const angle = (t - 0.5) * Math.PI * 0.6;
-    
-    // Elips yaprak
-    leaf.absellipse(x, y, leafW, leafH, 0, Math.PI * 2, false, angle);
+    leaf.absellipse(x, y, s * 0.4, s * 0.1, 0, Math.PI * 2, false, angle);
     shapes.push(leaf);
-    
-    // Karşı tarafa da yaprak (isteğe bağlı, daha dolgun görünür)
-    const leaf2 = new THREE.Shape();
-    leaf2.absellipse(x, y - s * 0.2, leafW, leafH, 0, Math.PI * 2, false, -angle);
-    shapes.push(leaf2);
-  }
+  });
   
-  // 3. Zeytin Taneleri (Olives)
+  // 3. Zeytin Taneleri (Resimdeki gibi 3 adet belirgin zeytin)
   const olivePos = [
-    { x: -s * 0.3, y: s * 0.1 },
-    { x: s * 0.1, y: s * 0.25 },
-    { x: s * 0.5, y: s * 0.1 }
+    { x: -s * 0.2, y: s * 0.1, rX: 0.18, rY: 0.25, rot: 0.2 },
+    { x: s * 0.15, y: s * 0.3, rX: 0.18, rY: 0.25, rot: -0.1 },
+    { x: s * 0.5, y: s * 0.2, rX: 0.18, rY: 0.25, rot: 0.4 }
   ];
   
   olivePos.forEach(p => {
     const olive = new THREE.Shape();
-    olive.absellipse(p.x, p.y, s * 0.15, s * 0.18, 0, Math.PI * 2, false, Math.PI/4);
+    olive.absellipse(p.x, p.y, s * p.rX, s * p.rY, 0, Math.PI * 2, false, p.rot);
     shapes.push(olive);
   });
+  
+  return shapes;
+}
+
+/**
+ * Alt Süsleme (Ornament / Fleur-de-lis style)
+ */
+export function createOrnamentShape(size = 24) {
+  const s = size / 2;
+  const shape = new THREE.Shape();
+  
+  // Merkezi yaprak
+  shape.moveTo(0, s * 0.8);
+  shape.bezierCurveTo(s * 0.3, s * 0.4, s * 0.3, 0, 0, 0);
+  shape.bezierCurveTo(-s * 0.3, 0, -s * 0.3, s * 0.4, 0, s * 0.8);
+  
+  // Yan kıvrımlar
+  const side = (dir) => {
+    const sgn = dir;
+    shape.moveTo(0, s * 0.2);
+    shape.bezierCurveTo(sgn * s * 0.8, s * 0.4, sgn * s * 0.8, -s * 0.4, sgn * s * 0.2, -s * 0.3);
+    shape.bezierCurveTo(sgn * s * 0.4, -s * 0.2, sgn * s * 0.4, s * 0.1, 0, s * 0.2);
+  };
+  side(1);
+  side(-1);
+  
+  return shape;
+}
+
+/**
+ * Yaprak (Single Leaf)
+ */
+export function createLeafShape(size = 24) {
+  const s = size / 2;
+  const shape = new THREE.Shape();
+  shape.moveTo(0, -s * 0.8);
+  shape.bezierCurveTo(s * 0.6, -s * 0.4, s * 0.6, s * 0.4, 0, s * 0.8);
+  shape.bezierCurveTo(-s * 0.6, s * 0.4, -s * 0.6, -s * 0.4, 0, -s * 0.8);
+  return shape;
+}
+
+/**
+ * Desenli Ayraç Çizgisi (Divider with ornament center)
+ */
+export function createDividerShape(width = 60, height = 4) {
+  const s = height / 2;
+  const w = width / 2;
+  const shapes = [];
+  
+  // 1. Sol Çizgi (İncelen uç)
+  const leftLine = new THREE.Shape();
+  leftLine.moveTo(-w, 0);
+  leftLine.lineTo(-s * 2, s * 0.5);
+  leftLine.lineTo(-s * 2, -s * 0.5);
+  leftLine.closePath();
+  shapes.push(leftLine);
+  
+  // 2. Sağ Çizgi
+  const rightLine = new THREE.Shape();
+  rightLine.moveTo(w, 0);
+  rightLine.lineTo(s * 2, s * 0.5);
+  rightLine.lineTo(s * 2, -s * 0.5);
+  rightLine.closePath();
+  shapes.push(rightLine);
+  
+  // 3. Orta Süs (Küçük bir elmas veya yuvarlak)
+  const center = new THREE.Shape();
+  center.absarc(0, 0, s * 1.5, 0, Math.PI * 2, false);
+  shapes.push(center);
   
   return shapes;
 }
@@ -394,6 +450,10 @@ export function createIconShape(type, size = 24) {
     case 'racket_table': return createTableTennisShape(size);
     case 'i_love': return createILoveShape(size);
     case 'olive': return createOliveShape(size);
+    case 'olive_detailed': return createOliveDetailedShape(size);
+    case 'ornament': return createOrnamentShape(size);
+    case 'leaf': return createLeafShape(size);
+    case 'divider': return createDividerShape(size);
     default: return null;
   }
 }

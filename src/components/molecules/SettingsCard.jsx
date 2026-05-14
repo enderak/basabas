@@ -9,7 +9,8 @@ export const SettingsCard = ({
   midText, setMidText,
   phoneText, setPhoneText,
   fontFamily, setFontFamily,
-  iconType, setIconType,
+  iconTopType, setIconTopType,
+  iconBottomType, setIconBottomType,
   customSvgUrl, setCustomSvgUrl,
   iconPosition, setIconPosition,
   isItalic, setIsItalic,
@@ -20,7 +21,10 @@ export const SettingsCard = ({
   baseShape, setBaseShape,
   plateThickness, setPlateThickness,
   holePosition, setHolePosition,
-  textScale, setTextScale,
+  textScaleMain, setTextScaleMain,
+  textScaleMid, setTextScaleMid,
+  textScaleSub, setTextScaleSub,
+  hasDivider, setHasDivider,
   iconScale, setIconScale,
   textOffset, setTextOffset,
   autoCenter, setAutoCenter,
@@ -126,8 +130,58 @@ export const SettingsCard = ({
             value={subText}
             onChange={(e) => setSubText(e.target.value.toLocaleUpperCase('tr-TR'))}
             className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
-            placeholder={t('placeholder_sub')}
           />
+        </div>
+
+        {/* Individual Line Scales */}
+        <div className="flex flex-col gap-4 pt-2 border-t border-slate-100">
+           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('text_sizes')}</label>
+           
+           {/* Main Text Scale */}
+           <div className="flex flex-col gap-2">
+             <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+               <span>{t('label_text')}</span>
+               <span>{textScaleMain}%</span>
+             </div>
+             <input 
+               type="range" min="20" max="150" step="1"
+               value={textScaleMain}
+               onChange={(e) => setTextScaleMain(parseInt(e.target.value))}
+               className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+             />
+           </div>
+
+           {/* Mid Text Scale */}
+           {midText && (
+             <div className="flex flex-col gap-2">
+               <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                 <span>{t('mid_text')}</span>
+                 <span>{textScaleMid}%</span>
+               </div>
+               <input 
+                 type="range" min="20" max="150" step="1"
+                 value={textScaleMid}
+                 onChange={(e) => setTextScaleMid(parseInt(e.target.value))}
+                 className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+               />
+             </div>
+           )}
+
+           {/* Sub Text Scale */}
+           {subText && (
+             <div className="flex flex-col gap-2">
+               <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                 <span>{t('sub_text')}</span>
+                 <span>{textScaleSub}%</span>
+               </div>
+               <input 
+                 type="range" min="20" max="150" step="1"
+                 value={textScaleSub}
+                 onChange={(e) => setTextScaleSub(parseInt(e.target.value))}
+                 className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+               />
+             </div>
+           )}
         </div>
 
 
@@ -188,56 +242,84 @@ export const SettingsCard = ({
           <span className="text-xs font-bold text-emerald-800">{t('is_mirrored')}</span>
         </label>
 
-        {/* SİMGE (ICON) SEÇİMİ VE KONUMU */}
+        {/* SİMGE SEÇİMİ VE AYRAÇ */}
         <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
+          
+          {/* Üst Simge */}
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon')}</label>
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_top')}</label>
             <div className="relative">
               <select
-                value={iconType}
-                onChange={(e) => {
-                  setIconType(e.target.value);
-                  if (e.target.value !== 'custom') {
-                    setCustomSvgUrl(null);
-                  }
-                }}
+                value={iconTopType}
+                onChange={(e) => setIconTopType(e.target.value)}
                 className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
               >
                 <option value="none">{t('icon_none')}</option>
+                <option value="olive_detailed">{t('icon_olive_detailed')} 🌿</option>
                 <option value="clover">{t('icon_clover')} 🍀</option>
                 <option value="star_crescent">{t('icon_star_crescent')} 🌙</option>
                 <option value="heart">{t('icon_heart')} ❤️</option>
-                <option value="skull">{t('icon_skull')} 💀</option>
-                <option value="rook">{t('icon_rook')} ♖</option>
-                <option value="racket_table">{t('icon_racket_table')} 🏓</option>
-                <option value="racket_tennis">{t('icon_racket_tennis')} 🎾</option>
-                <option value="olive">{t('icon_olive')} 🌿</option>
                 <option value="custom">{t('icon_custom')} 📁</option>
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
               </div>
             </div>
+          </div>
 
-            {/* Sökülebilir Sap Toggle */}
-            <div className="pt-2">
-              <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100 transition-colors">
-                <div className="relative flex items-center">
-                  <input 
-                    type="checkbox" 
-                    checked={isHandleRemovable}
-                    onChange={(e) => setIsHandleRemovable(e.target.checked)}
-                    className="peer sr-only"
-                  />
-                  <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-emerald-900">{t('handle_removable')}</span>
-                  <span className="text-[9px] text-emerald-700/70 leading-none">{t('handle_removable_desc')}</span>
-                </div>
-              </label>
+          {/* Ayraç Çizgisi */}
+          <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-inner">
+             <div className="flex flex-col">
+                <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">{t('has_divider')}</span>
+                <span className="text-[9px] text-slate-400">Metinler arası desen</span>
+             </div>
+             <button 
+               onClick={() => setHasDivider(!hasDivider)}
+               className={`w-12 h-6 rounded-full relative transition-colors ${hasDivider ? 'bg-emerald-500' : 'bg-slate-300'}`}
+             >
+               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${hasDivider ? 'left-7' : 'left-1'}`} />
+             </button>
+          </div>
+
+          {/* Alt Simge */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_bottom')}</label>
+            <div className="relative">
+              <select
+                value={iconBottomType}
+                onChange={(e) => setIconBottomType(e.target.value)}
+                className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+              >
+                <option value="none">{t('icon_none')}</option>
+                <option value="ornament">{t('icon_ornament')} ⚜</option>
+                <option value="leaf">{t('icon_leaf')} 🍃</option>
+                <option value="clover">{t('icon_clover')} 🍀</option>
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
             </div>
           </div>
+
+          {/* Sökülebilir Sap Toggle */}
+          <div className="pt-2">
+            <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100 transition-colors">
+              <div className="relative flex items-center">
+                <input 
+                  type="checkbox" 
+                  checked={isHandleRemovable}
+                  onChange={(e) => setIsHandleRemovable(e.target.checked)}
+                  className="peer sr-only"
+                />
+                <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-bold text-emerald-900">{t('handle_removable')}</span>
+                <span className="text-[9px] text-emerald-700/70 leading-none">{t('handle_removable_desc')}</span>
+              </div>
+            </label>
+          </div>
+        </div>
 
           {/* CUSTOM SVG UPLOAD */}
           {iconType === 'custom' && (
