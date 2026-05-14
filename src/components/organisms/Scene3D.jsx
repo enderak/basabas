@@ -421,8 +421,8 @@ export const Scene3D = ({
   if (hasIconTop) actualContentW = Math.max(actualContentW, iconTopRealSize);
   if (hasIconBottom) actualContentW = Math.max(actualContentW, iconBottomRealSize);
 
-  let baseW = actualContentW + 20; // Padding düşürüldü (60 -> 20)
-  let baseD = totalContentDepth + 20;
+  let baseW = actualContentW + 30; // Padding artırıldı (20 -> 30)
+  let baseD = totalContentDepth + 30;
 
   // Daire ise kare tabanlı bir daire oluştur
   if (selectedShape === 'circle') {
@@ -707,7 +707,7 @@ export const Scene3D = ({
                     })}
                     
                     {rimType === 'dotted' && points.map((p, i) => (
-                      <mesh key={i} position={[p.x * 0.97, p.y * 0.97, textDepth / 2]}>
+                      <mesh key={i} position={[p.x * 0.97, p.y * 0.97, 0]}>
                         <cylinderGeometry args={[1.2, 1.2, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                         <meshStandardMaterial color={materialColor} />
                       </mesh>
@@ -745,13 +745,13 @@ export const Scene3D = ({
                 {rimType === 'double_dotted' && (
                       <>
                         {points.map((p, i) => (
-                          <mesh key={`d1-${i}`} position={[p.x * 0.98, p.y * 0.98, textDepth / 2]}>
+                          <mesh key={`d1-${i}`} position={[p.x * 0.98, p.y * 0.98, 0]}>
                             <cylinderGeometry args={[0.8, 0.8, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                             <meshStandardMaterial color={materialColor} />
                           </mesh>
                         ))}
                         {points.map((p, i) => (
-                          <mesh key={`d2-${i}`} position={[p.x * 0.94, p.y * 0.94, textDepth / 2]}>
+                          <mesh key={`d2-${i}`} position={[p.x * 0.94, p.y * 0.94, 0]}>
                             <cylinderGeometry args={[0.8, 0.8, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                             <meshStandardMaterial color={materialColor} />
                           </mesh>
@@ -759,7 +759,7 @@ export const Scene3D = ({
                       </>
                     )}
                     {rimType === 'palace' && (
-                      <mesh position={[0, 0, textDepth / 2]}>
+                      <mesh position={[0, 0, 0]}>
                         <extrudeGeometry args={[rimPalaceShape, { depth: textDepth, bevelEnabled: false, curveSegments: 64 }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
