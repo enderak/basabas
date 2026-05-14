@@ -421,8 +421,8 @@ export const Scene3D = ({
   if (hasIconTop) actualContentW = Math.max(actualContentW, iconTopRealSize);
   if (hasIconBottom) actualContentW = Math.max(actualContentW, iconBottomRealSize);
 
-  let baseW = actualContentW + 60; // Padding daha da artırıldı (40 -> 60)
-  let baseD = totalContentDepth + 60;
+  let baseW = actualContentW + 20; // Padding düşürüldü (60 -> 20)
+  let baseD = totalContentDepth + 20;
 
   // Daire ise kare tabanlı bir daire oluştur
   if (selectedShape === 'circle') {
