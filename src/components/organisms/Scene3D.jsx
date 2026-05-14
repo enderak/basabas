@@ -584,7 +584,7 @@ export const Scene3D = ({
       <group scale={[SCALE, SCALE, SCALE]} position={[0, -0.5, zCenterOffset * SCALE]}>
         <group ref={groupRef} scale={[innerScale, innerScale, innerScale]}>
           {/* TABAN (BASE PLATE) */}
-          <group position={[baseCenterX, 0, baseCenterZ]} rotation={[-Math.PI / 2, 0, 0]}>
+          <group name="BaseGroup" position={[baseCenterX, 0, baseCenterZ]} rotation={[-Math.PI / 2, 0, 0]}>
             {isHandleRemovable ? (
               <>
                 {/* Alt katman - delikli (3mm) */}
@@ -690,7 +690,7 @@ export const Scene3D = ({
 
 
           {/* TUTAMAK (HANDLE) - PROFESYONEL VINTAGE SAP */}
-          <group position={[baseCenterX, 0, baseCenterZ]} rotation={[Math.PI, 0, 0]}>
+          <group name="HandleGroup" position={[baseCenterX, 0, baseCenterZ]} rotation={[Math.PI, 0, 0]}>
             <mesh>
               <latheGeometry args={[handlePoints, 64]} />
               <meshStandardMaterial color={handleColor || '#334155'} roughness={0.6} metalness={0.2} />

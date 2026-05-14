@@ -40,54 +40,27 @@ export const handleExport = (groupRef, fileName = "SAKRAD_Isimlik", isMultiColor
   if (isMultiColor) {
     const zip = new JSZip();
     const allChildren = [...groupRef.current.children];
-    const allMeshes = collectMeshes(groupRef.current);
-    const heartMesh = allMeshes.find(m => m.name === 'ILoveIcon_1');
-
-    // 1. TABAN
-    groupRef.current.children = allChildren.filter(c => c.name === 'BasePlate');
+    
+    // 1. TABAN (BaseGroup)
+    groupRef.current.children = allChildren.filter(c => c.name === 'BaseGroup');
     groupRef.current.updateMatrixWorld(true);
     zip.file(`${fileName}_TABAN.stl`, stlBuf(exporter.parse(groupRef.current, { binary: true })));
 
-    if (heartMesh) {
-      const heartParent = heartMesh.parent;
-      const heartIndex = heartParent.children.indexOf(heartMesh);
+    // 2. SAP (HandleGroup)
+    groupRef.current.children = allChildren.filter(c => c.name === 'HandleGroup');
+    groupRef.current.updateMatrixWorld(true);
+    zip.file(`${fileName}_SAP.stl`, stlBuf(exporter.parse(groupRef.current, { binary: true })));
 
-      // 2a. YAZI — kalp mesh'ini fiziksel olarak gruptan çıkar
-      heartParent.children.splice(heartIndex, 1);
-      groupRef.current.children = allChildren.filter(c => c.name && c.name !== 'BasePlate');
-      groupRef.current.updateMatrixWorld(true);
-      zip.file(`${fileName}_YAZI.stl`, stlBuf(exporter.parse(groupRef.current, { binary: true })));
-
-      // 2b. KALP — sadece kalbi gruptan çıkar, diğerlerini çıkar
-      // Kalbi geri koy, diğer kardeşlerini geçici olarak çıkar
-      const siblings = [...heartParent.children]; // I harfi vs.
-      heartParent.children.length = 0;
-      heartParent.children.push(heartMesh);
-
-      // Diğer top-level çocukları da geçici kaldır (TextMain vs.)
-      groupRef.current.children = allChildren.filter(c => c.name && c.name !== 'BasePlate');
-      // Ama sadece ILoveGroup'u tut
-      const textChildren = groupRef.current.children.filter(c => c !== heartParent);
-      groupRef.current.children = [heartParent];
-      groupRef.current.updateMatrixWorld(true);
-      zip.file(`${fileName}_KALP_KIRMIZI.stl`, stlBuf(exporter.parse(groupRef.current, { binary: true })));
-
-      // Geri yükle
-      heartParent.children.length = 0;
-      siblings.forEach(s => heartParent.children.push(s));
-      heartParent.children.splice(heartIndex, 0, heartMesh);
-    } else {
-      // Kalp yoksa 2'li export
-      groupRef.current.children = allChildren.filter(c => c.name && c.name !== 'BasePlate');
-      groupRef.current.updateMatrixWorld(true);
-      zip.file(`${fileName}_YAZI.stl`, stlBuf(exporter.parse(groupRef.current, { binary: true })));
-    }
+    // 3. YAZI VE SİMGELER (Geri kalan her şey)
+    groupRef.current.children = allChildren.filter(c => c.name !== 'BaseGroup' && c.name !== 'HandleGroup');
+    groupRef.current.updateMatrixWorld(true);
+    zip.file(`${fileName}_YAZI_VE_SIMGELER.stl`, stlBuf(exporter.parse(groupRef.current, { binary: true })));
 
     // Sahneyi eski haline getir
     groupRef.current.children = allChildren;
     
     zip.generateAsync({ type: "blob" }).then((content) => {
-      downloadBlob(content, `${fileName}_CiftRenk.zip`);
+      downloadBlob(content, `${fileName}_CokluRenk.zip`);
     });
 
   } else {

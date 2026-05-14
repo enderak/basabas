@@ -85,7 +85,7 @@ const resources = {
       "auto_length_tooltip": "Harf sayısına göre otomatik uzunluk",
       "text_scale": "Yazı Boyutu (%)",
       "export_single": "Tek Parça STL İndir",
-      "export_multi": "Çift Renk (AMS) STL İndir",
+      "export_multi": "Çoklu Renk (AMS) STL İndir",
       "ams_tip_title": "Çoklu Renk (AMS) Baskı",
       "ams_tip": "İndirdiğiniz ZIP dosyasındaki iki parçayı Bambu Studio'ya aynı anda sürükleyin. 'Tek obje olarak yüklensin mi?' sorusuna EVET deyin. Sol taraftaki Objeler (Objects) panelinden parçalara sağ tıklayıp farklı renk (flament) atayabilirsiniz.",
       "ignore_cantilever": "⚠️ Not: Bambu Studio'da 'Yüzen konsol var' (Floating cantilever) uyarısı alırsanız endişelenmeyin! Bu bir hata değildir; 'T' ve 'E' gibi yatay kollara sahip harflerin doğası gereği altının boş olmasından kaynaklanır. Uyarıyı yoksayıp basabilir veya dilerseniz 'Destek (Support)' açarak yazdırabilirsiniz.",
@@ -192,7 +192,7 @@ const resources = {
       "auto_length_tooltip": "Automatic length based on letter count",
       "text_scale": "Text Scale (%)",
       "export_single": "Download Single Part STL",
-      "export_multi": "Download Dual-Color (AMS) ZIP",
+      "export_multi": "Download Multi-Color (AMS) ZIP",
       "ams_tip_title": "Multi-Color (AMS) Printing",
       "ams_tip": "Drag both pieces from the downloaded ZIP into Bambu Studio simultaneously. Click YES when asked 'Load as single object?'. You can assign different colors by right-clicking parts in the Objects panel on the left.",
       "ignore_cantilever": "⚠️ Note: If Bambu Studio shows a 'Floating cantilever' warning, don't panic! It's not a bug; it's the natural geometry of letters with horizontal arms (like 'T' or 'E'). You can safely ignore the warning or enable supports if preferred."
@@ -281,7 +281,7 @@ const resources = {
       "auto_length_tooltip": "Automatische Länge basierend auf Buchstabenanzahl",
       "text_scale": "Textgröße (%)",
       "export_single": "Einzel-STL herunterladen",
-      "export_multi": "Zweifarbige (AMS) ZIP herunterladen",
+      "export_multi": "Mehrfarbige (AMS) ZIP herunterladen",
       "ams_tip_title": "Mehrfarbiger (AMS) Druck",
       "ams_tip": "Ziehen Sie beide Dateien aus der heruntergeladenen ZIP-Datei gleichzeitig in Bambu Studio. Klicken Sie auf JA, wenn Sie gefragt werden: 'Als einzelnes Objekt laden?'. Sie können verschiedene Farben zuweisen, indem Sie im Objektabschitt mit der rechten Maustaste klicken.",
       "ignore_cantilever": "⚠️ Hinweis: Keine Panik bei 'Floating cantilever' (schwebender Überhang) Warnungen! Dies ist kein Bug, sondern resultiert aus Buchstaben mit waagrechten Armen (wie 'T' oder 'E'). Ignorieren Sie die Warnung oder aktivieren Sie Stützstrukturen."
@@ -439,7 +439,7 @@ const resources = {
       "auto_length_tooltip": "Longitud automática basada en el número de letras",
       "text_scale": "Escala de Texto (%)",
       "export_single": "Descargar STL de Pieza Única",
-      "export_multi": "Descargar ZIP de Doble Color (AMS)",
+      "export_multi": "Descargar ZIP Multi-Color (AMS)",
       "ams_tip_title": "Impresión Multi-color (AMS)",
       "ams_tip": "Arrastra ambas piezas desde el ZIP descargado a Bambu Studio simultáneamente. Haz clic en SÍ cuando se te pregunte '¿Cargar como un solo objeto?'. Puedes asignar diferentes colores haciendo clic derecho en las piezas en el panel de Objetos a la izquierda.",
       "ignore_cantilever": "⚠️ Nota: Si Bambu Studio muestra un aviso de 'Voladizo flotante' (Floating cantilever), ¡no entres en pánico! No es un error; es la geometría natural de las letras con brazos horizontales (como 'T' o 'E'). Puedes ignorar el aviso con seguridad o activar soportes si lo prefieres."
