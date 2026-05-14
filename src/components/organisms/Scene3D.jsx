@@ -258,7 +258,7 @@ export const Scene3D = ({
         const sizeX = box.max.x - box.min.x;
         const sizeY = box.max.y - box.min.y;
         const maxDim = Math.max(sizeX, sizeY);
-        const targetSize = letterSize;
+        const targetSize = letterSizeMain;
         const s = targetSize / maxDim;
         
         const center = new THREE.Vector2();
@@ -310,8 +310,8 @@ export const Scene3D = ({
   const hasIconTop = iconShapeTop !== null;
   const hasIconBottom = iconShapeBottom !== null;
   const iconSpacing = 8.0; 
-  const iconTopRealSize = hasIconTop ? (letterSizeMain * iconScale / 100) : 0;
-  const iconBottomRealSize = hasIconBottom ? (letterSizeMain * 0.8 * iconScale / 100) : 0;
+  const iconTopRealSize = hasIconTop ? (letterSizeMain * iconScale) : 0;
+  const iconBottomRealSize = hasIconBottom ? (letterSizeMain * 0.8 * iconScale) : 0;
 
 
 
@@ -400,17 +400,6 @@ export const Scene3D = ({
 
   let textX = contentCenter;
   let iconX = contentCenter;
-
-  if (hasIcon) {
-    if (iconPosition === 'left') {
-      iconX = contentLeft + iconRealSize / 2;
-      textX = contentRight - textBlockWidth / 2;
-    } else if (iconPosition === 'right') {
-      textX = contentLeft + textBlockWidth / 2;
-      iconX = contentRight - iconRealSize / 2;
-    }
-    // If no icon, still need to align text
-  }
 
   const baseCenterX = 0; 
   const baseCenterZ = 0; 
