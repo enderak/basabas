@@ -121,10 +121,11 @@ const createHeartBaseShape = (width, depth, holeConfig) => {
   return shape;
 };
 
-// Daire taban şekli
+// Daire taban şekli - Daha yüksek hassasiyet
 const createCircleBaseShape = (width, depth, holeConfig) => {
   const shape = new THREE.Shape();
   const radius = Math.max(width, depth) / 2;
+  // absarc(x, y, radius, startAngle, endAngle, clockwise)
   shape.absarc(0, 0, radius, 0, Math.PI * 2, false);
   
   if (holeConfig) {
@@ -228,6 +229,26 @@ export const Scene3D = ({
       setLoadedFont(font);
     });
   }, [fontPath]);
+
+  // Sap (Handle) için Lathe Profili
+  const handlePoints = useMemo(() => {
+    const pts = [];
+    const r = handleRadius;
+    const h = handleHeight;
+    // (x, y) - X is radius, Y is height
+    // Tabandan tepeye doğru profil:
+    pts.push(new THREE.Vector2(0.001, 0)); // Alt merkez
+    pts.push(new THREE.Vector2(r, 0));     // Alt kenar
+    pts.push(new THREE.Vector2(r, 2));     // Küçük basamak
+    pts.push(new THREE.Vector2(r * 0.8, 6)); 
+    pts.push(new THREE.Vector2(r * 0.35, h * 0.4)); // En ince yer (Boyun)
+    pts.push(new THREE.Vector2(r * 0.45, h * 0.5));
+    pts.push(new THREE.Vector2(r * 0.8, h * 0.65)); // Bulb başlangıcı
+    pts.push(new THREE.Vector2(r * 1.1, h * 0.82)); // En geniş yer
+    pts.push(new THREE.Vector2(r * 0.6, h * 0.95)); // Kapanış
+    pts.push(new THREE.Vector2(0, h));             // Tepe merkez
+    return pts;
+  }, [handleRadius, handleHeight]);
 
   // Programatik icon shape oluştur
   const iconScale = 0.65 * (customIconScale / 100.0); // İkon yazıdan biraz küçük
@@ -382,10 +403,10 @@ export const Scene3D = ({
   if (hasIconTop) actualContentW = Math.max(actualContentW, iconTopRealSize);
   if (hasIconBottom) actualContentW = Math.max(actualContentW, iconBottomRealSize);
 
-  let baseW = actualContentW + 28; // Padding artırıldı
-  let baseD = totalContentDepth + 28;
+  let baseW = actualContentW + 32; // Padding artırıldı
+  let baseD = totalContentDepth + 32;
 
-  // Daire ise kare tabanlı bir daire oluştur (kutu kutu görünümü engellemek için)
+  // Daire ise kare tabanlı bir daire oluştur
   if (selectedShape === 'circle') {
     const size = Math.max(baseW, baseD);
     baseW = size;
@@ -590,7 +611,7 @@ export const Scene3D = ({
             <group position={[baseCenterX, baseH, baseCenterZ]} rotation={[-Math.PI / 2, 0, 0]}>
               {/* RİM PATTERNS BASED ON SHAPE */}
               {(() => {
-                const rimCount = rimType === 'wave' ? 60 : (rimType === 'zigzag' ? 48 : 36);
+                const rimCount = selectedShape === 'circle' ? 128 : (rimType === 'wave' ? 64 : 48);
                 // Get points along the perimeter, slightly offset inward
                 const points = baseShapeSolid.getSpacedPoints(rimCount);
                 const inset = 1.5; // Offset inward from edge
@@ -668,28 +689,15 @@ export const Scene3D = ({
           )}
 
 
-          {/* TUTAMAK (HANDLE) - ERGONOMİK ISAMPA SAPI */}
-          <group position={[baseCenterX, 0, baseCenterZ]}>
-            {/* Alt Taban (Tabla üstü) */}
-            <mesh position={[0, -2, 0]}>
-              <cylinderGeometry args={[handleRadius * 0.9, handleRadius, 4, 32]} />
-              <meshStandardMaterial color={handleColor || '#334155'} roughness={0.7} metalness={0.2} />
-            </mesh>
-            
-            {/* Boyun (İnce kısım) */}
-            <mesh position={[0, -handleHeight * 0.4, 0]}>
-              <cylinderGeometry args={[handleRadius * 0.4, handleRadius * 0.8, handleHeight * 0.6, 32]} />
-              <meshStandardMaterial color={handleColor || '#334155'} roughness={0.7} metalness={0.2} />
-            </mesh>
-
-            {/* Tepe (Tutma yeri - Bulb) */}
-            <mesh position={[0, -handleHeight + (handleRadius * 0.5), 0]}>
-               <sphereGeometry args={[handleRadius * 1.1, 32, 16]} />
-               <meshStandardMaterial color={handleColor || '#334155'} roughness={0.6} metalness={0.2} />
+          {/* TUTAMAK (HANDLE) - PROFESYONEL VINTAGE SAP */}
+          <group position={[baseCenterX, 0, baseCenterZ]} rotation={[Math.PI, 0, 0]}>
+            <mesh>
+              <latheGeometry args={[handlePoints, 64]} />
+              <meshStandardMaterial color={handleColor || '#334155'} roughness={0.6} metalness={0.2} />
             </mesh>
 
             {isHandleRemovable && (
-              <group position={[0, 0, 0]}>
+              <group position={[0, 0, 0]} rotation={[Math.PI, 0, 0]}>
                 {/* Pin Base */}
                 <mesh position={[0, 1.5, 0]}>
                   <cylinderGeometry args={[3.8, 3.8, 3.5, 32]} />
