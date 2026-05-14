@@ -473,7 +473,7 @@ export const Scene3D = ({
       : createRoundedRectShape(baseW - 3.0, baseD - 3.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1));
     
     const frame = outer.clone();
-    frame.holes.push(new THREE.Path().setFromPoints(inner.getPoints()));
+    frame.holes.push(new THREE.Path().setFromPoints(inner.getPoints(128)));
     return frame;
   }, [selectedShape, baseW, baseD]);
 
@@ -493,9 +493,9 @@ export const Scene3D = ({
       : createRoundedRectShape(baseW - 4.0, baseD - 4.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2));
 
     const frame = outer1.clone();
-    frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints()));
-    frame.holes.push(new THREE.Path().setFromPoints(outer2.getPoints()));
-    frame.holes.push(new THREE.Path().setFromPoints(inner2.getPoints()));
+    frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints(128)));
+    frame.holes.push(new THREE.Path().setFromPoints(outer2.getPoints(128)));
+    frame.holes.push(new THREE.Path().setFromPoints(inner2.getPoints(128)));
     return frame;
   }, [selectedShape, baseW, baseD]);
 
@@ -589,18 +589,18 @@ export const Scene3D = ({
               <>
                 {/* Alt katman - delikli (3mm) */}
                 <mesh>
-                  <extrudeGeometry args={[baseShapeWithHole, { depth: baseH * 0.7, bevelEnabled: false }]} />
+                  <extrudeGeometry args={[baseShapeWithHole, { depth: baseH * 0.7, bevelEnabled: false, curveSegments: 128 }]} />
                   <meshStandardMaterial color={baseColor || '#0F172A'} roughness={0.8} />
                 </mesh>
                 {/* Üst katman - kapalı (2mm) */}
                 <mesh position={[0, 0, baseH * 0.7]}>
-                  <extrudeGeometry args={[baseShapeSolid, { depth: baseH * 0.3, bevelEnabled: false }]} />
+                  <extrudeGeometry args={[baseShapeSolid, { depth: baseH * 0.3, bevelEnabled: false, curveSegments: 128 }]} />
                   <meshStandardMaterial color={baseColor || '#0F172A'} roughness={0.8} />
                 </mesh>
               </>
             ) : (
               <mesh>
-                <extrudeGeometry args={[baseShapeSolid, { depth: baseH, bevelEnabled: false }]} />
+                <extrudeGeometry args={[baseShapeSolid, { depth: baseH, bevelEnabled: false, curveSegments: 128 }]} />
                 <meshStandardMaterial color={baseColor || '#0F172A'} roughness={0.8} />
               </mesh>
             )}
@@ -620,14 +620,14 @@ export const Scene3D = ({
                   <>
                     {rimType === 'simple' && (
                       <mesh position={[0, 0, 0.5]}>
-                        <extrudeGeometry args={[rimFrameShape, { depth: textDepth, bevelEnabled: false }]} />
+                        <extrudeGeometry args={[rimFrameShape, { depth: textDepth, bevelEnabled: false, curveSegments: 128 }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
                     )}
                     
                     {rimType === 'double' && (
                       <mesh position={[0, 0, 0.5]}>
-                        <extrudeGeometry args={[rimDoubleFrameShape, { depth: textDepth, bevelEnabled: false }]} />
+                        <extrudeGeometry args={[rimDoubleFrameShape, { depth: textDepth, bevelEnabled: false, curveSegments: 128 }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
                     )}
