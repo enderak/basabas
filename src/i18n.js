@@ -92,7 +92,7 @@ const resources = {
       "text_sizes": "METİN BOYUTLARI",
       "icon_top": "Üst Simge",
       "icon_bottom": "Alt Simge",
-      "icon_olive_detailed": "Zeytinli Dal",
+      "icon_olive_detailed": "Zeytinli Zeytin Dalı",
       "icon_ornament": "Süsleme",
       "icon_leaf": "Yaprak",
       "has_divider": "Desenli Ayraç"
@@ -158,7 +158,7 @@ const resources = {
       "text_sizes": "TEXT SIZES",
       "icon_top": "Top Icon",
       "icon_bottom": "Bottom Icon",
-      "icon_olive_detailed": "Olive with Fruits",
+      "icon_olive_detailed": "Detailed Olive Branch",
       "icon_ornament": "Ornament",
       "icon_leaf": "Leaf",
       "has_divider": "Patterned Divider",

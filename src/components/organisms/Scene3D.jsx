@@ -701,7 +701,7 @@ export const Scene3D = ({
           >
           {/* ÜST SİMGE */}
           {hasIconTop && (
-             <group position={[0, iconTopZ, textDepth/2]} rotation={[-Math.PI / 2, 0, 0]}>
+             <group position={[0, baseH, iconTopZ]} rotation={[-Math.PI / 2, 0, 0]}>
                {Array.isArray(iconShapeTop) ? (
                  iconShapeTop.map((s, i) => (
                    <mesh key={i}>
@@ -737,7 +737,7 @@ export const Scene3D = ({
 
           {/* AYRAÇ ÇİZGİSİ */}
           {hasDivider && dividerShape && (
-            <group position={[0, dividerZ, textDepth/2]} rotation={[-Math.PI / 2, 0, 0]}>
+            <group position={[0, baseH, dividerZ]} rotation={[-Math.PI / 2, 0, 0]}>
                {dividerShape.map((s, i) => (
                  <mesh key={i}>
                    <extrudeGeometry args={[s, { depth: textDepth, bevelEnabled: false }]} />
@@ -783,7 +783,7 @@ export const Scene3D = ({
 
           {/* ALT SİMGE */}
           {hasIconBottom && (
-             <group position={[0, iconBottomZ, textDepth/2]} rotation={[-Math.PI / 2, 0, 0]}>
+             <group position={[0, baseH, iconBottomZ]} rotation={[-Math.PI / 2, 0, 0]}>
                {Array.isArray(iconShapeBottom) ? (
                  iconShapeBottom.map((s, i) => (
                    <mesh key={i}>

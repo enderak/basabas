@@ -349,20 +349,20 @@ export function createOliveDetailedShape(size = 24) {
     const y = (1 - Math.pow(t * 2 - 1, 2)) * s * 0.4 + s * 0.1;
     
     const leaf = new THREE.Shape();
-    leaf.absellipse(x, y, s * 0.4, s * 0.1, 0, Math.PI * 2, false, angle);
+    leaf.ellipse(x, y, s * 0.4, s * 0.1, 0, Math.PI * 2, false, angle);
     shapes.push(leaf);
   });
   
-  // 3. Zeytin Taneleri (Resimdeki gibi 3 adet belirgin zeytin)
+  // 3. Zeytin Taneleri (Daha belirgin 3 adet zeytin)
   const olivePos = [
-    { x: -s * 0.2, y: s * 0.1, rX: 0.18, rY: 0.25, rot: 0.2 },
-    { x: s * 0.15, y: s * 0.3, rX: 0.18, rY: 0.25, rot: -0.1 },
-    { x: s * 0.5, y: s * 0.2, rX: 0.18, rY: 0.25, rot: 0.4 }
+    { x: -s * 0.3, y: s * 0.2, rX: 0.22, rY: 0.3, rot: 0.2 },
+    { x: s * 0.1, y: s * 0.4, rX: 0.22, rY: 0.3, rot: -0.1 },
+    { x: s * 0.5, y: s * 0.3, rX: 0.22, rY: 0.3, rot: 0.4 }
   ];
   
   olivePos.forEach(p => {
     const olive = new THREE.Shape();
-    olive.absellipse(p.x, p.y, s * p.rX, s * p.rY, 0, Math.PI * 2, false, p.rot);
+    olive.ellipse(p.x, p.y, s * p.rX, s * p.rY, 0, Math.PI * 2, false, p.rot);
     shapes.push(olive);
   });
   
