@@ -309,7 +309,7 @@ export const Scene3D = ({
 
   const hasIconTop = iconShapeTop !== null;
   const hasIconBottom = iconShapeBottom !== null;
-  const iconSpacing = 8.0; 
+  const iconSpacing = 14.0; 
   const iconTopRealSize = hasIconTop ? (letterSizeMain * iconScale) : 0;
   const iconBottomRealSize = hasIconBottom ? (letterSizeMain * 0.8 * iconScale) : 0;
 
@@ -333,32 +333,28 @@ export const Scene3D = ({
 
   // 2. Main Text
   textMainZ = currentZ + letterSizeMain / 2;
-  currentZ += letterSizeMain;
+  currentZ += letterSizeMain + (hasDivider || hasMidText ? iconSpacing : 0);
 
   // 3. Divider
   if (hasDivider) {
-    currentZ += iconSpacing * 0.5;
-    dividerZ = currentZ + 2; // thin divider
-    currentZ += 4 + iconSpacing * 0.5;
+    dividerZ = currentZ + 1; // thin divider
+    currentZ += 2 + iconSpacing;
   }
 
   // 4. Middle Text
   if (hasMidText) {
-    if (!hasDivider) currentZ += iconSpacing * 0.5;
     textMidZ = currentZ + letterSizeMid / 2;
-    currentZ += letterSizeMid;
+    currentZ += letterSizeMid + (hasSubText ? iconSpacing : 0);
   }
 
   // 5. Bottom Text
   if (hasSubText) {
-    currentZ += iconSpacing * 0.3;
     textSubZ = currentZ + letterSizeSub / 2;
-    currentZ += letterSizeSub;
+    currentZ += letterSizeSub + (hasIconBottom ? iconSpacing : 0);
   }
 
   // 6. Bottom Icon
   if (hasIconBottom) {
-    currentZ += iconSpacing * 0.8;
     iconBottomZ = currentZ + iconBottomRealSize / 2;
     currentZ += iconBottomRealSize;
   }
@@ -386,11 +382,14 @@ export const Scene3D = ({
   if (hasIconTop) actualContentW = Math.max(actualContentW, iconTopRealSize);
   if (hasIconBottom) actualContentW = Math.max(actualContentW, iconBottomRealSize);
 
-  let baseW = actualContentW + 24; // Padding
-  let baseD = totalContentDepth + 24;
+  let baseW = actualContentW + 28; // Padding artırıldı
+  let baseD = totalContentDepth + 28;
 
-  if (selectedShape === 'teardrop') {
-    baseW += (10.0 * scaleRatio);
+  // Daire ise kare tabanlı bir daire oluştur (kutu kutu görünümü engellemek için)
+  if (selectedShape === 'circle') {
+    const size = Math.max(baseW, baseD);
+    baseW = size;
+    baseD = size;
   }
 
   // Calculate local centers
@@ -669,14 +668,28 @@ export const Scene3D = ({
           )}
 
 
-          {/* TUTAMAK (HANDLE) */}
-          <group position={[baseCenterX, -handleHeight / 2, baseCenterZ]}>
-            <mesh name="StampHandle">
-              <cylinderGeometry args={[handleRadius * 0.8, handleRadius, handleHeight, 32]} />
-              <meshStandardMaterial color={handleColor || '#334155'} roughness={0.8} />
+          {/* TUTAMAK (HANDLE) - ERGONOMİK ISAMPA SAPI */}
+          <group position={[baseCenterX, 0, baseCenterZ]}>
+            {/* Alt Taban (Tabla üstü) */}
+            <mesh position={[0, -2, 0]}>
+              <cylinderGeometry args={[handleRadius * 0.9, handleRadius, 4, 32]} />
+              <meshStandardMaterial color={handleColor || '#334155'} roughness={0.7} metalness={0.2} />
             </mesh>
+            
+            {/* Boyun (İnce kısım) */}
+            <mesh position={[0, -handleHeight * 0.4, 0]}>
+              <cylinderGeometry args={[handleRadius * 0.4, handleRadius * 0.8, handleHeight * 0.6, 32]} />
+              <meshStandardMaterial color={handleColor || '#334155'} roughness={0.7} metalness={0.2} />
+            </mesh>
+
+            {/* Tepe (Tutma yeri - Bulb) */}
+            <mesh position={[0, -handleHeight + (handleRadius * 0.5), 0]}>
+               <sphereGeometry args={[handleRadius * 1.1, 32, 16]} />
+               <meshStandardMaterial color={handleColor || '#334155'} roughness={0.6} metalness={0.2} />
+            </mesh>
+
             {isHandleRemovable && (
-              <group position={[0, handleHeight/2, 0]}>
+              <group position={[0, 0, 0]}>
                 {/* Pin Base */}
                 <mesh position={[0, 1.5, 0]}>
                   <cylinderGeometry args={[3.8, 3.8, 3.5, 32]} />
