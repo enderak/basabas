@@ -19,8 +19,6 @@ export const SettingsCard = ({
   baseColor, setBaseColor,
   handleColor, setHandleColor,
   baseShape, setBaseShape,
-  plateThickness, setPlateThickness,
-  holePosition, setHolePosition,
   textScaleMain, setTextScaleMain,
   textScaleMid, setTextScaleMid,
   textScaleSub, setTextScaleSub,
@@ -48,8 +46,10 @@ export const SettingsCard = ({
     { value: '#F87171', label: 'Coral' },  
   ];
 
+  const hasAnyIcon = iconTopType !== 'none' || iconBottomType !== 'none';
+
   return (
-    <div className="bg-white p-6 sm:p-8 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 flex flex-col gap-6 w-full max-w-sm shrink-0">
+    <div className="bg-white p-6 sm:p-8 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 flex flex-col gap-6 w-full max-w-sm shrink-0 overflow-y-auto max-h-[90vh]">
       
       {/* Language Selector */}
       <div className="flex flex-col gap-2">
@@ -60,15 +60,11 @@ export const SettingsCard = ({
         <div className="bg-slate-100/80 p-1 rounded-xl flex items-center h-11 w-full relative">
           {[
             { code: 'TR', name: 'TÜRKÇE' },
-            { code: 'EN', name: 'ENGLISH' },
-            { code: 'DE', name: 'DEUTSCH' },
-            { code: 'AZ', name: 'AZƏRBAYCAN' },
-            { code: 'ES', name: 'ESPAÑOL' }
+            { code: 'EN', name: 'ENGLISH' }
           ].map((lang) => (
             <button
               key={lang.code}
               onClick={() => i18n.changeLanguage(lang.code)}
-              title={lang.name}
               className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-all flex items-center justify-center ${
                 i18n.language === lang.code 
                   ? 'bg-white shadow-sm text-emerald-600' 
@@ -78,135 +74,128 @@ export const SettingsCard = ({
               {lang.code}
             </button>
           ))}
+        </div>
       </div>
-    </div>
 
-    <div className="flex flex-col gap-5 border-b border-slate-100 pb-5">
+      <div className="flex flex-col gap-5 border-b border-slate-100 pb-5">
         {/* YAZI TİPİ (FONT) SEÇİMİ */}
         <div className="flex flex-col gap-2">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('font_family')}</label>
           <div className="relative">
-              <select
-                value={fontFamily}
-                onChange={(e) => setFontFamily(e.target.value)}
-                className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
-              >
-                <option value="plus">Jakarta Sans (TR Support)</option>
-                <option value="droid">Droid Sans</option>
-                <option value="helvetiker">Helvetiker</option>
-                <option value="optimer">Optimer</option>
-              </select>
+            <select
+              value={fontFamily}
+              onChange={(e) => setFontFamily(e.target.value)}
+              className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+            >
+              <option value="plus">Jakarta Sans (TR Support)</option>
+              <option value="droid">Droid Sans</option>
+              <option value="helvetiker">Helvetiker</option>
+              <option value="optimer">Optimer</option>
+            </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </div>
           </div>
         </div>
 
-        {/* Text Inputs */}
+        {/* Metin Girişleri */}
         <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500">{t('label_text')}</label>
-          <input 
-            value={text}
-            onChange={(e) => setText(e.target.value.toLocaleUpperCase('tr-TR'))}
-            className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
-            placeholder={t('placeholder_text')}
-          />
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500">{t('label_text')}</label>
+            <input 
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
+              placeholder={t('placeholder_text')}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500">{t('mid_text')}</label>
+            <input 
+              value={midText}
+              onChange={(e) => setMidText(e.target.value)}
+              className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
+              placeholder={t('placeholder_mid_text')}
+            />
+          </div>
+          
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500">{t('sub_text')}</label>
+            <input 
+              value={subText}
+              onChange={(e) => setSubText(e.target.value)}
+              className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
+              placeholder={t('placeholder_sub_text')}
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500">{t('mid_text')}</label>
-          <input 
-            value={midText}
-            onChange={(e) => setMidText(e.target.value)}
-            className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
-            placeholder={t('placeholder_mid_text')}
-          />
-        </div>
-        
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500">{t('sub_text')}</label>
-          <input 
-            value={subText}
-            onChange={(e) => setSubText(e.target.value.toLocaleUpperCase('tr-TR'))}
-            className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
-          />
-        </div>
-
-        {/* Individual Line Scales */}
+        {/* Metin Boyutları Sliderları */}
         <div className="flex flex-col gap-4 pt-2 border-t border-slate-100">
-           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('text_sizes')}</label>
-           
-           {/* Main Text Scale */}
-           <div className="flex flex-col gap-2">
-             <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-               <span>{t('label_text')}</span>
-               <span>{textScaleMain}%</span>
-             </div>
-             <input 
-               type="range" min="20" max="150" step="1"
-               value={textScaleMain}
-               onChange={(e) => setTextScaleMain(parseInt(e.target.value))}
-               className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-             />
-           </div>
+          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('text_sizes')}</label>
+          
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+              <span>{t('label_text')}</span>
+              <span>{textScaleMain}%</span>
+            </div>
+            <input 
+              type="range" min="20" max="150" step="1"
+              value={textScaleMain}
+              onChange={(e) => setTextScaleMain(parseInt(e.target.value))}
+              className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+            />
+          </div>
 
-           {/* Mid Text Scale */}
-           {midText && (
-             <div className="flex flex-col gap-2">
-               <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                 <span>{t('mid_text')}</span>
-                 <span>{textScaleMid}%</span>
-               </div>
-               <input 
-                 type="range" min="20" max="150" step="1"
-                 value={textScaleMid}
-                 onChange={(e) => setTextScaleMid(parseInt(e.target.value))}
-                 className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-               />
-             </div>
-           )}
+          {midText && (
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                <span>{t('mid_text')}</span>
+                <span>{textScaleMid}%</span>
+              </div>
+              <input 
+                type="range" min="20" max="150" step="1"
+                value={textScaleMid}
+                onChange={(e) => setTextScaleMid(parseInt(e.target.value))}
+                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+              />
+            </div>
+          )}
 
-           {/* Sub Text Scale */}
-           {subText && (
-             <div className="flex flex-col gap-2">
-               <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                 <span>{t('sub_text')}</span>
-                 <span>{textScaleSub}%</span>
-               </div>
-               <input 
-                 type="range" min="20" max="150" step="1"
-                 value={textScaleSub}
-                 onChange={(e) => setTextScaleSub(parseInt(e.target.value))}
-                 className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-               />
-             </div>
-           )}
+          {subText && (
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                <span>{t('sub_text')}</span>
+                <span>{textScaleSub}%</span>
+              </div>
+              <input 
+                type="range" min="20" max="150" step="1"
+                value={textScaleSub}
+                onChange={(e) => setTextScaleSub(parseInt(e.target.value))}
+                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+              />
+            </div>
+          )}
         </div>
-
-
-
-
       </div>
-    </div>
 
-    {/* Yazı Derinliği (Çıkıntı yüksekliği) */}
-      <div className="flex flex-col gap-4 mt-2">
+      {/* Fiziksel Ayarlar */}
+      <div className="flex flex-col gap-5">
+        
         <div className="flex flex-col gap-3">
           <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
             <span>{t('text_depth')}</span>
             <span>{textDepth.toFixed(1)}mm</span>
           </div>
           <input 
-            type="range" 
-            min="0.5" max="5.0" step="0.5"
+            type="range" min="0.5" max="5.0" step="0.1"
             value={textDepth}
             onChange={(e) => setTextDepth(parseFloat(e.target.value))}
             className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
           />
         </div>
 
-        {/* İtalik (Dönüştürme) */}
         <div className="flex flex-col gap-2">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('transform')}</label>
           <div className="bg-slate-100/80 p-1 rounded-xl flex items-center h-11 w-full relative">
@@ -216,7 +205,7 @@ export const SettingsCard = ({
                 !isItalic ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
-              {t('normal_text') || 'NORMAL'}
+              {t('normal_text')}
             </button>
             <button 
               onClick={() => setIsItalic(true)}
@@ -224,12 +213,12 @@ export const SettingsCard = ({
                 isItalic ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
+              {t('italic')}
             </button>
           </div>
         </div>
 
-        {/* AYNALAMA (MIRROR) - Sadece Stamp modunda veya isteğe bağlı */}
-        <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100/80 transition-colors mt-1">
+        <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100/80 transition-colors">
           <div className="relative flex items-center">
             <input 
               type="checkbox" 
@@ -241,179 +230,85 @@ export const SettingsCard = ({
           </div>
           <span className="text-xs font-bold text-emerald-800">{t('is_mirrored')}</span>
         </label>
-
-        {/* SİMGE SEÇİMİ VE AYRAÇ */}
-        <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
-          
-          {/* Üst Simge */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_top')}</label>
-            <div className="relative">
-              <select
-                value={iconTopType}
-                onChange={(e) => setIconTopType(e.target.value)}
-                className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
-              >
-                <option value="none">{t('icon_none')}</option>
-                <option value="olive_detailed">{t('icon_olive_detailed')} 🌿</option>
-                <option value="clover">{t('icon_clover')} 🍀</option>
-                <option value="star_crescent">{t('icon_star_crescent')} 🌙</option>
-                <option value="heart">{t('icon_heart')} ❤️</option>
-                <option value="custom">{t('icon_custom')} 📁</option>
-              </select>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Ayraç Çizgisi */}
-          <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-inner">
-             <div className="flex flex-col">
-                <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">{t('has_divider')}</span>
-                <span className="text-[9px] text-slate-400">Metinler arası desen</span>
-             </div>
-             <button 
-               onClick={() => setHasDivider(!hasDivider)}
-               className={`w-12 h-6 rounded-full relative transition-colors ${hasDivider ? 'bg-emerald-500' : 'bg-slate-300'}`}
-             >
-               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${hasDivider ? 'left-7' : 'left-1'}`} />
-             </button>
-          </div>
-
-          {/* Alt Simge */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_bottom')}</label>
-            <div className="relative">
-              <select
-                value={iconBottomType}
-                onChange={(e) => setIconBottomType(e.target.value)}
-                className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
-              >
-                <option value="none">{t('icon_none')}</option>
-                <option value="ornament">{t('icon_ornament')} ⚜</option>
-                <option value="leaf">{t('icon_leaf')} 🍃</option>
-                <option value="clover">{t('icon_clover')} 🍀</option>
-              </select>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Sökülebilir Sap Toggle */}
-          <div className="pt-2">
-            <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100 transition-colors">
-              <div className="relative flex items-center">
-                <input 
-                  type="checkbox" 
-                  checked={isHandleRemovable}
-                  onChange={(e) => setIsHandleRemovable(e.target.checked)}
-                  className="peer sr-only"
-                />
-                <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xs font-bold text-emerald-900">{t('handle_removable')}</span>
-                <span className="text-[9px] text-emerald-700/70 leading-none">{t('handle_removable_desc')}</span>
-              </div>
-            </label>
-          </div>
-        </div>
-
-          {/* CUSTOM SVG UPLOAD */}
-          {iconType === 'custom' && (
-            <div className="flex flex-col gap-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">SVG Yükle</label>
-              <input 
-                type="file" 
-                accept=".svg"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                      setCustomSvgUrl(event.target.result);
-                    };
-                    reader.readAsDataURL(file);
-                  }
-                }}
-                className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-all cursor-pointer"
-              />
-            </div>
-          )}
-
-          {/* ICON POSITION */}
-          {iconType !== 'none' && (
-            <div className="flex flex-col gap-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_position')}</label>
-              <div className="bg-slate-100/80 p-1 rounded-xl flex items-center h-11 w-full relative">
-                <button 
-                  onClick={() => setIconPosition('left')}
-                  className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
-                    iconPosition === 'left' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400 hover:text-slate-600'
-                  }`}
-                >
-                  {t('icon_pos_left')}
-                </button>
-                <button 
-                  onClick={() => setIconPosition('top')}
-                  className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
-                    iconPosition === 'top' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400 hover:text-slate-600'
-                  }`}
-                >
-                  {t('icon_pos_top')}
-                </button>
-                <button 
-                  onClick={() => setIconPosition('right')}
-                  className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
-                    iconPosition === 'right' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400 hover:text-slate-600'
-                  }`}
-                >
-                  {t('icon_pos_right')}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ICON SCALE */}
-          {iconType !== 'none' && (
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-3 mt-1">
-                <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                  <span>{t('icon_depth')}</span>
-                  <span>{iconDepth.toFixed(1)}mm</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="0.5" max="5.0" step="0.5"
-                  value={iconDepth}
-                  onChange={(e) => setIconDepth(parseFloat(e.target.value))}
-                  className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-                />
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                  <span>Simge Boyutu</span>
-                  <span>{iconScale}%</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="20" max="200" step="5"
-                  value={iconScale}
-                  onChange={(e) => setIconScale(parseInt(e.target.value))}
-                  className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-                />
-              </div>
-            </div>
-          )}
-        </div>
       </div>
 
-      {/* Renk Seçimi: Yazı ve Taban */}
-      <div className="flex flex-col gap-4">
-        {/* Yazı Rengi */}
+      {/* Simgeler ve Ayraç */}
+      <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
+        <div className="flex flex-col gap-2">
+          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_top')}</label>
+          <select
+            value={iconTopType}
+            onChange={(e) => setIconTopType(e.target.value)}
+            className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+          >
+            <option value="none">{t('icon_none')}</option>
+            <option value="olive_detailed">{t('icon_olive_detailed')} 🌿</option>
+            <option value="clover">{t('icon_clover')} 🍀</option>
+            <option value="star_crescent">{t('icon_star_crescent')} 🌙</option>
+            <option value="heart">{t('icon_heart')} ❤️</option>
+            <option value="custom">{t('icon_custom')} 📁</option>
+          </select>
+        </div>
+
+        <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-inner">
+           <div className="flex flex-col">
+              <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">{t('has_divider')}</span>
+              <span className="text-[9px] text-slate-400">Metinler arası desen</span>
+           </div>
+           <button 
+             onClick={() => setHasDivider(!hasDivider)}
+             className={`w-12 h-6 rounded-full relative transition-colors ${hasDivider ? 'bg-emerald-500' : 'bg-slate-300'}`}
+           >
+             <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${hasDivider ? 'left-7' : 'left-1'}`} />
+           </button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_bottom')}</label>
+          <select
+            value={iconBottomType}
+            onChange={(e) => setIconBottomType(e.target.value)}
+            className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+          >
+            <option value="none">{t('icon_none')}</option>
+            <option value="ornament">{t('icon_ornament')} ⚜</option>
+            <option value="leaf">{t('icon_leaf')} 🍃</option>
+            <option value="clover">{t('icon_clover')} 🍀</option>
+          </select>
+        </div>
+
+        {hasAnyIcon && (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                <span>{t('icon_depth')}</span>
+                <span>{iconDepth.toFixed(1)}mm</span>
+              </div>
+              <input 
+                type="range" min="0.5" max="5.0" step="0.1"
+                value={iconDepth}
+                onChange={(e) => setIconDepth(parseFloat(e.target.value))}
+                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+              />
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                <span>Simge Boyutu</span>
+                <span>{iconScale}%</span>
+              </div>
+              <input 
+                type="range" min="20" max="200" step="5"
+                value={iconScale}
+                onChange={(e) => setIconScale(parseInt(e.target.value))}
+                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Renk Seçimi */}
+      <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
         <div className="flex flex-col gap-2">
           <label className="text-[11px] font-bold text-slate-500">{t('label_text_color')}</label>
           <div className="flex gap-3">
@@ -425,13 +320,10 @@ export const SettingsCard = ({
                   materialColor === color.value ? 'ring-2 ring-offset-2 ring-emerald-500 scale-110' : ''
                 }`}
                 style={{ backgroundColor: color.value }}
-                aria-label={color.label}
               />
             ))}
           </div>
         </div>
-        
-        {/* Taban Rengi */}
         <div className="flex flex-col gap-2">
           <label className="text-[11px] font-bold text-slate-500">{t('label_base_color')}</label>
           <div className="flex gap-3">
@@ -443,41 +335,20 @@ export const SettingsCard = ({
                   baseColor === color.value ? 'ring-2 ring-offset-2 ring-emerald-500 scale-110' : ''
                 }`}
                 style={{ backgroundColor: color.value }}
-                aria-label={color.label}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Sap Rengi */}
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500">{t('label_handle_color')}</label>
-          <div className="flex gap-3">
-            {colors.map((color) => (
-              <button
-                key={color.value}
-                onClick={() => setHandleColor(color.value)}
-                className={`w-8 h-8 rounded-full relative transition-transform hover:scale-110 shadow-sm ${
-                  handleColor === color.value ? 'ring-2 ring-offset-2 ring-emerald-500 scale-110' : ''
-                }`}
-                style={{ backgroundColor: color.value }}
-                aria-label={color.label}
               />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Sliders */}
-      <div className="flex flex-col gap-4 mt-2">
-
-        {/* Taban Şekli */}
+      {/* Taban ve Sap Ayarları */}
+      <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
         <div className="flex flex-col gap-2">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('base_shape')}</label>
           <div className="bg-slate-100/80 p-1 rounded-xl flex items-center h-11 w-full relative">
             <button 
               onClick={() => setBaseShape('rectangle')}
-              className={`z-10 flex-1 text-[10px] sm:text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
+              className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
                 baseShape === 'rectangle' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
@@ -485,7 +356,7 @@ export const SettingsCard = ({
             </button>
             <button 
               onClick={() => setBaseShape('circle')}
-              className={`z-10 flex-1 text-[10px] sm:text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
+              className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
                 baseShape === 'circle' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
@@ -494,8 +365,6 @@ export const SettingsCard = ({
           </div>
         </div>
 
-
-        {/* Çerçeve Deseni (Rim Type) */}
         <div className="flex flex-col gap-2">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('rim_type')}</label>
           <select
@@ -514,118 +383,66 @@ export const SettingsCard = ({
           </select>
         </div>
 
-        {/* TUTAMAK AYARLARI */}
-        <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
+        <div className="flex flex-col gap-5">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('handle_settings')}</label>
-          
           <div className="flex flex-col gap-3">
             <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
               <span>{t('handle_height')}</span>
               <span>{handleHeight.toFixed(0)}mm</span>
             </div>
             <input 
-              type="range" 
-              min="10" max="60" step="1"
+              type="range" min="10" max="60" step="1"
               value={handleHeight}
               onChange={(e) => setHandleHeight(parseFloat(e.target.value))}
               className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
             />
           </div>
-
           <div className="flex flex-col gap-3">
             <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
               <span>{t('handle_radius')}</span>
               <span>{handleRadius.toFixed(0)}mm</span>
             </div>
             <input 
-              type="range" 
-              min="5" max="25" step="1"
+              type="range" min="5" max="25" step="1"
               value={handleRadius}
               onChange={(e) => setHandleRadius(parseFloat(e.target.value))}
               className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
             />
           </div>
+          <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100 transition-colors">
+            <div className="relative flex items-center">
+              <input 
+                type="checkbox" 
+                checked={isHandleRemovable}
+                onChange={(e) => setIsHandleRemovable(e.target.checked)}
+                className="peer sr-only"
+              />
+              <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-emerald-900">{t('handle_removable')}</span>
+              <span className="text-[9px] text-emerald-700/70 leading-none">{t('handle_removable_desc')}</span>
+            </div>
+          </label>
         </div>
-
-        {/* Yazı Boyutu (Scale) */}
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-            <span>{t('text_scale')}</span>
-            <span>{textScale}%</span>
-          </div>
-          <input 
-            type="range" 
-            min="20" max="150" step="1"
-            value={textScale}
-            onChange={(e) => setTextScale(parseInt(e.target.value))}
-            className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-          />
-        </div>
-
-        {/* Taban Yüksekliği (Base Height) */}
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-            <span>{t('base_height')}</span>
-            <span>{baseHeight.toFixed(1)}mm</span>
-          </div>
-          <input 
-            type="range" 
-            min="2" max="10" step="0.5"
-            value={baseHeight}
-            onChange={(e) => setBaseHeight(parseFloat(e.target.value))}
-            className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 outline-none"
-          />
-        </div>
-
-        {/* --- YENİ: KONUM AYARLARI --- */}
-        <div className="w-full h-px bg-slate-100/80 my-1"></div>
-        
-        {/* Üretim Uzunluğu Seçici (Dropdown) */}
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('fixed_length')}</label>
-          <select
-            value={targetWidth || 0}
-            onChange={(e) => setTargetWidth(parseInt(e.target.value) || 0)}
-            className="bg-white border border-slate-200/80 text-sm font-bold text-slate-700 py-3 px-4 rounded-xl outline-none focus:border-emerald-500 transition-all shadow-sm shadow-slate-100/50 cursor-pointer"
-          >
-            <option value={0}>{t('auto')}</option>
-            <option value={40}>4 {t('width_cm')}</option>
-            <option value={50}>5 {t('width_cm')}</option>
-            <option value={60}>6 {t('width_cm')}</option>
-            <option value={70}>7 {t('width_cm')}</option>
-            <option value={80}>8 {t('width_cm')}</option>
-            <option value={100}>10 {t('width_cm')}</option>
-            <option value={150}>15 {t('width_cm')}</option>
-          </select>
-        </div>
-
-
-      </div>
-
-      {/* Bilgilendirme Notu */}
-      <div className="bg-amber-50 border border-amber-200/60 rounded-xl p-3 flex items-start gap-2 mt-1">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-        <p className="text-[10px] text-amber-800 font-medium leading-relaxed">
-          <strong className="font-bold">Not:</strong> Delik konumu veya simge yönü değiştiğinde modelin dengesi için <span className="font-bold">Yazı Boyutu</span> değişikliği yapılması gerekebilir.
-        </p>
       </div>
 
       {/* Export Buttons */}
-      <div className="flex flex-row gap-3 mt-2">
+      <div className="flex flex-col gap-3 mt-auto pt-4">
         <button 
           onClick={() => onExport(false)}
-          className="flex-1 bg-[#059669] hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg shadow-emerald-500/20 py-3.5 px-2 rounded-xl font-bold flex flex-col items-center justify-center gap-1 transition-all active:scale-95 text-[11px] text-center"
+          className="w-full bg-[#059669] hover:bg-emerald-700 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-emerald-200"
         >
-          <Download size={18} />
+          <Download size={20} />
           {t('export_single')}
         </button>
         <button 
           onClick={() => onExport(true)}
-          className="flex-1 bg-slate-800 hover:bg-slate-900 active:bg-slate-950 text-white shadow-lg shadow-slate-900/20 py-3.5 px-2 rounded-xl font-bold flex flex-col items-center justify-center gap-1 transition-all active:scale-95 text-[11px] text-center border border-slate-700"
+          className="w-full bg-slate-800 hover:bg-slate-900 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-slate-200"
         >
-          <div className="flex items-center -space-x-2">
-            <span className="w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-slate-800 z-10"></span>
-            <span className="w-3 h-3 rounded-full bg-yellow-500 ring-2 ring-slate-800 z-0"></span>
+          <div className="flex gap-1">
+            <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+            <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
           </div>
           {t('export_multi')}
         </button>
