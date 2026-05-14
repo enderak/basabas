@@ -250,6 +250,24 @@ export const Scene3D = ({
     return pts;
   }, [handleRadius, handleHeight]);
 
+  // Vida (Thread) yolu için sarmal (helix) oluşturma
+  const threadCurve = useMemo(() => {
+    const pts = [];
+    const radius = 3.9; // M8 vida için yaklaşık yarıçap
+    const height = 12;  // Vida boyu
+    const turns = 10;   // Diş sayısı
+    for (let i = 0; i <= 150; i++) {
+      const t = i / 150;
+      const angle = t * Math.PI * 2 * turns;
+      pts.push(new THREE.Vector3(
+        Math.cos(angle) * radius,
+        t * height,
+        Math.sin(angle) * radius
+      ));
+    }
+    return new THREE.CatmullRomCurve3(pts);
+  }, []);
+
   // Programatik icon shape oluştur
   const iconScale = 0.65 * (customIconScale / 100.0); // İkon yazıdan biraz küçük
   
@@ -701,18 +719,21 @@ export const Scene3D = ({
 
             {isHandleRemovable && (
               <group position={[0, 0, 0]} rotation={[Math.PI, 0, 0]}>
-                {/* Pin Base */}
-                <mesh position={[0, 1.5, 0]}>
-                  <cylinderGeometry args={[3.8, 3.8, 3.5, 32]} />
+                {/* Vida Ana Gövdesi (Core) */}
+                <mesh position={[0, 6, 0]}>
+                  <cylinderGeometry args={[3.4, 3.4, 12, 32]} />
+                  <meshStandardMaterial color={handleColor || '#334155'} roughness={0.7} metalness={0.3} />
+                </mesh>
+                {/* Sarmal Vida Dişleri (Threads - Yiv ve Set) */}
+                <mesh position={[0, 0, 0]}>
+                  <tubeGeometry args={[threadCurve, 150, 0.6, 8, false]} />
+                  <meshStandardMaterial color={handleColor || '#334155'} roughness={0.4} metalness={0.5} />
+                </mesh>
+                {/* Vida Başı / Ucu */}
+                <mesh position={[0, 0.2, 0]}>
+                  <cylinderGeometry args={[3.0, 0, 1.5, 32]} />
                   <meshStandardMaterial color={handleColor || '#334155'} roughness={0.8} />
                 </mesh>
-                {/* Helical Threads (Visual) */}
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <mesh key={i} position={[0, 0.5 + i * 0.6, 0]} rotation={[0.08, 0, 0.05]}>
-                    <torusGeometry args={[3.8, 0.25, 8, 32]} />
-                    <meshStandardMaterial color={handleColor || '#334155'} roughness={0.4} metalness={0.2} />
-                  </mesh>
-                ))}
               </group>
             )}
           </group>
