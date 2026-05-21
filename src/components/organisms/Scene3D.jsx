@@ -677,14 +677,14 @@ export const Scene3D = ({
                 return (
                   <>
                     {rimType === 'simple' && (
-                      <mesh position={[0, 0, 0.5]}>
+                      <mesh position={[0, 0, 0]}>
                         <extrudeGeometry args={[rimFrameShape, { depth: textDepth, bevelEnabled: false, curveSegments: 64 }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
                     )}
                     
                     {rimType === 'double' && (
-                      <mesh position={[0, 0, 0.5]}>
+                      <mesh position={[0, 0, 0]}>
                         <extrudeGeometry args={[rimDoubleFrameShape, { depth: textDepth, bevelEnabled: false, curveSegments: 64 }]} />
                         <meshStandardMaterial color={materialColor} roughness={0.4} metalness={0.1} />
                       </mesh>
@@ -694,13 +694,13 @@ export const Scene3D = ({
                       if (i % 3 !== 0) return null;
                       const angle = Math.atan2(p.y, p.x);
                       return (
-                        <group key={i} position={[p.x * 0.95, p.y * 0.95, 0.75]} rotation={[0, 0, angle]}>
+                        <group key={i} position={[p.x * 0.95, p.y * 0.95, textDepth / 2]} rotation={[0, 0, angle]}>
                           <mesh>
-                            <boxGeometry args={[2, 0.6, 1.5]} />
+                            <boxGeometry args={[2, 0.6, textDepth]} />
                             <meshStandardMaterial color={materialColor} />
                           </mesh>
                           <mesh position={[0.8, 0.8, 0]} rotation={[0, 0, Math.PI/2]}>
-                            <boxGeometry args={[1.5, 0.6, 1.5]} />
+                            <boxGeometry args={[1.5, 0.6, textDepth]} />
                             <meshStandardMaterial color={materialColor} />
                           </mesh>
                         </group>
@@ -708,14 +708,14 @@ export const Scene3D = ({
                     })}
                     
                     {rimType === 'dotted' && points.map((p, i) => (
-                      <mesh key={i} position={[p.x * 0.97, p.y * 0.97, 0]}>
+                      <mesh key={i} position={[p.x * 0.97, p.y * 0.97, textDepth / 2]}>
                         <cylinderGeometry args={[1.2, 1.2, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                         <meshStandardMaterial color={materialColor} />
                       </mesh>
                     ))}
 
                     {rimType === 'scalloped' && points.map((p, i) => (
-                      <mesh key={i} position={[p.x * 0.94, p.y * 0.94, 0.5]}>
+                      <mesh key={i} position={[p.x * 0.94, p.y * 0.94, textDepth / 2]}>
                         <cylinderGeometry args={[2.0, 2.0, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                         <meshStandardMaterial color={materialColor} />
                       </mesh>
@@ -746,13 +746,13 @@ export const Scene3D = ({
                 {rimType === 'double_dotted' && (
                       <>
                         {points.map((p, i) => (
-                          <mesh key={`d1-${i}`} position={[p.x * 0.98, p.y * 0.98, 0]}>
+                          <mesh key={`d1-${i}`} position={[p.x * 0.98, p.y * 0.98, textDepth / 2]}>
                             <cylinderGeometry args={[0.8, 0.8, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                             <meshStandardMaterial color={materialColor} />
                           </mesh>
                         ))}
                         {points.map((p, i) => (
-                          <mesh key={`d2-${i}`} position={[p.x * 0.94, p.y * 0.94, 0]}>
+                          <mesh key={`d2-${i}`} position={[p.x * 0.94, p.y * 0.94, textDepth / 2]}>
                             <cylinderGeometry args={[0.8, 0.8, textDepth, 16]} rotation={[Math.PI/2, 0, 0]} />
                             <meshStandardMaterial color={materialColor} />
                           </mesh>
