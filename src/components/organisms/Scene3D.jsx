@@ -167,7 +167,8 @@ export const Scene3D = ({
   handleRadius = 12.0,
   rimType = 'simple',
   iconDepth = 2.0,
-  isHandleRemovable = false
+  isHandleRemovable = false,
+  hasHandle = true
 }) => {
   const [textSizeMain, setTextSizeMain] = useState([60, 20, 6]);
   const [textSizeSub, setTextSizeSub] = useState([0, 0, 0]);
@@ -642,7 +643,7 @@ export const Scene3D = ({
         <group ref={groupRef} scale={[innerScale, innerScale, innerScale]}>
           {/* TABAN (BASE PLATE) */}
           <group name="BaseGroup" position={[baseCenterX, 0, baseCenterZ]} rotation={[-Math.PI / 2, 0, 0]}>
-            {isHandleRemovable ? (
+            {isHandleRemovable && hasHandle ? (
               <>
                 {/* Alt katman - delikli (3mm) */}
                 <mesh>
@@ -772,32 +773,34 @@ export const Scene3D = ({
 
 
           {/* TUTAMAK (HANDLE) - PROFESYONEL VINTAGE SAP */}
-          <group name="HandleGroup" position={[baseCenterX, 0, baseCenterZ]} rotation={[Math.PI, 0, 0]}>
-            <mesh>
-              <latheGeometry args={[handlePoints, 32]} />
-              <meshStandardMaterial color={handleColor || '#334155'} roughness={0.6} metalness={0.2} />
-            </mesh>
+          {hasHandle && (
+            <group name="HandleGroup" position={[baseCenterX, 0, baseCenterZ]} rotation={[Math.PI, 0, 0]}>
+              <mesh>
+                <latheGeometry args={[handlePoints, 32]} />
+                <meshStandardMaterial color={handleColor || '#334155'} roughness={0.6} metalness={0.2} />
+              </mesh>
 
-            {isHandleRemovable && (
-              <group position={[0, 0, 0]} rotation={[Math.PI, 0, 0]}>
-                {/* Vida Ana Gövdesi (Core) */}
-                <mesh position={[0, Math.max(8, baseH - 2) / 2, 0]}>
-                  <cylinderGeometry args={[3.4, 3.4, Math.max(8, baseH - 2), 32]} />
-                  <meshStandardMaterial color={handleColor || '#334155'} roughness={0.7} metalness={0.3} />
-                </mesh>
-                {/* Sarmal Vida Dişleri (Threads - Yiv ve Set) */}
-                <mesh position={[0, 0, 0]}>
-                  <tubeGeometry args={[threadCurve, 150, 0.6, 8, false]} />
-                  <meshStandardMaterial color={handleColor || '#334155'} roughness={0.4} metalness={0.5} />
-                </mesh>
-                {/* Vida Başı / Ucu */}
-                <mesh position={[0, 0.2, 0]}>
-                  <cylinderGeometry args={[3.0, 0, 1.5, 32]} />
-                  <meshStandardMaterial color={handleColor || '#334155'} roughness={0.8} />
-                </mesh>
-              </group>
-            )}
-          </group>
+              {isHandleRemovable && (
+                <group position={[0, 0, 0]} rotation={[Math.PI, 0, 0]}>
+                  {/* Vida Ana Gövdesi (Core) */}
+                  <mesh position={[0, Math.max(8, baseH - 2) / 2, 0]}>
+                    <cylinderGeometry args={[3.4, 3.4, Math.max(8, baseH - 2), 32]} />
+                    <meshStandardMaterial color={handleColor || '#334155'} roughness={0.7} metalness={0.3} />
+                  </mesh>
+                  {/* Sarmal Vida Dişleri (Threads - Yiv ve Set) */}
+                  <mesh position={[0, 0, 0]}>
+                    <tubeGeometry args={[threadCurve, 150, 0.6, 8, false]} />
+                    <meshStandardMaterial color={handleColor || '#334155'} roughness={0.4} metalness={0.5} />
+                  </mesh>
+                  {/* Vida Başı / Ucu */}
+                  <mesh position={[0, 0.2, 0]}>
+                    <cylinderGeometry args={[3.0, 0, 1.5, 32]} />
+                    <meshStandardMaterial color={handleColor || '#334155'} roughness={0.8} />
+                  </mesh>
+                </group>
+              )}
+            </group>
+          )}
 
           {/* ANA İÇERİK GRUBU (YAZI VE İKONLAR) - AYNALAMA BURADA UYGULANIYOR */}
           <group 

@@ -37,6 +37,7 @@ const App = () => {
   const [rimType, setRimType] = useState('simple'); // simple, double, dotted, scalloped, none
   const [iconDepth, setIconDepth] = useState(2.0); // Simge derinliği
   const [isHandleRemovable, setIsHandleRemovable] = useState(false); // Sökülebilir sap
+  const [hasHandle, setHasHandle] = useState(true); // Saplı/sapsız mühür seçeneği
   const [isPending, startTransition] = useTransition();
   const groupRef = useRef();
   const { t, i18n } = useTranslation();
@@ -171,6 +172,8 @@ const App = () => {
             setIconDepth={setIconDepthOptimized}
             isHandleRemovable={isHandleRemovable}
             setIsHandleRemovable={setIsHandleRemovable}
+            hasHandle={hasHandle}
+            setHasHandle={setHasHandle}
             onExport={(isMultiColor) => handleExport(groupRef, text, isMultiColor)}
           />
 
@@ -247,6 +250,7 @@ const App = () => {
                 rimType={rimType}
                 iconDepth={iconDepth}
                 isHandleRemovable={isHandleRemovable}
+                hasHandle={hasHandle}
               />
             </Canvas>
           </div>

@@ -47,9 +47,12 @@ export const handleExport = (groupRef, fileName = "SAKRAD_Isimlik", isMultiColor
     zip.file(`${fileName}_TABAN.stl`, stlBuf(exporter.parse(groupRef.current, { binary: true })));
 
     // 2. SAP (HandleGroup)
-    groupRef.current.children = allChildren.filter(c => c.name === 'HandleGroup');
-    groupRef.current.updateMatrixWorld(true);
-    zip.file(`${fileName}_SAP.stl`, stlBuf(exporter.parse(groupRef.current, { binary: true })));
+    const handleChildren = allChildren.filter(c => c.name === 'HandleGroup');
+    if (handleChildren.length > 0) {
+      groupRef.current.children = handleChildren;
+      groupRef.current.updateMatrixWorld(true);
+      zip.file(`${fileName}_SAP.stl`, stlBuf(exporter.parse(groupRef.current, { binary: true })));
+    }
 
     // 3. YAZI VE SİMGELER (Geri kalan her şey)
     groupRef.current.children = allChildren.filter(c => c.name !== 'BaseGroup' && c.name !== 'HandleGroup');

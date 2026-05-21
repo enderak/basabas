@@ -67,6 +67,7 @@ export const SettingsCard = ({
   rimType, setRimType,
   iconDepth, setIconDepth,
   isHandleRemovable, setIsHandleRemovable,
+  hasHandle, setHasHandle,
   onExport 
 }) => {
   const { t, i18n } = useTranslation();
@@ -402,6 +403,23 @@ export const SettingsCard = ({
 
         <div className="flex flex-col gap-5">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('handle_settings')}</label>
+          
+          <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100/80 transition-colors">
+            <div className="relative flex items-center">
+              <input 
+                type="checkbox" 
+                checked={hasHandle}
+                onChange={(e) => setHasHandle(e.target.checked)}
+                className="peer sr-only"
+              />
+              <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-emerald-900">{t('has_handle')}</span>
+              <span className="text-[9px] text-emerald-700/70 leading-none">{t('has_handle_desc')}</span>
+            </div>
+          </label>
+
           <RangeInput 
             label="Tabla Kalınlığı"
             value={baseHeight}
@@ -409,35 +427,40 @@ export const SettingsCard = ({
             suffix="mm"
             onChange={setBaseHeight}
           />
-          <RangeInput 
-            label={t('handle_height')}
-            value={handleHeight}
-            min="10" max="60" step="1"
-            suffix="mm"
-            onChange={setHandleHeight}
-          />
-          <RangeInput 
-            label={t('handle_radius')}
-            value={handleRadius}
-            min="5" max="25" step="1"
-            suffix="mm"
-            onChange={setHandleRadius}
-          />
-          <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100 transition-colors">
-            <div className="relative flex items-center">
-              <input 
-                type="checkbox" 
-                checked={isHandleRemovable}
-                onChange={(e) => setIsHandleRemovable(e.target.checked)}
-                className="peer sr-only"
+
+          {hasHandle && (
+            <>
+              <RangeInput 
+                label={t('handle_height')}
+                value={handleHeight}
+                min="10" max="60" step="1"
+                suffix="mm"
+                onChange={setHandleHeight}
               />
-              <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-emerald-900">{t('handle_removable')}</span>
-              <span className="text-[9px] text-emerald-700/70 leading-none">{t('handle_removable_desc')}</span>
-            </div>
-          </label>
+              <RangeInput 
+                label={t('handle_radius')}
+                value={handleRadius}
+                min="5" max="25" step="1"
+                suffix="mm"
+                onChange={setHandleRadius}
+              />
+              <label className="flex items-center gap-3 p-3 bg-emerald-50/50 border border-emerald-100/60 rounded-xl cursor-pointer hover:bg-emerald-100/60 transition-colors">
+                <div className="relative flex items-center">
+                  <input 
+                    type="checkbox" 
+                    checked={isHandleRemovable}
+                    onChange={(e) => setIsHandleRemovable(e.target.checked)}
+                    className="peer sr-only"
+                  />
+                  <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-emerald-900">{t('handle_removable')}</span>
+                  <span className="text-[9px] text-emerald-700/70 leading-none">{t('handle_removable_desc')}</span>
+                </div>
+              </label>
+            </>
+          )}
         </div>
       </div>
 
