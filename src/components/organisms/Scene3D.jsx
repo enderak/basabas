@@ -137,12 +137,12 @@ const createCircleBaseShape = (width, depth, holeConfig) => {
 };
 
 // Ev (House) taban şekli - Hassas parametrik çizim (Saçaklar ve baca ile)
-const createHouseBaseShape = (width, depth, holeConfig, inset = 0) => {
+const createHouseBaseShape = (width, depth, holeConfig, inset = 0, isCW = false) => {
   const shape = new THREE.Shape();
   const w = width;
   const d = depth;
   
-  // Evin sınırları (CCW yönünde)
+  // Evin sınırları
   const wallLeft = -w * 0.4 + inset;
   const wallRight = w * 0.4 - inset;
   const bottom = -d * 0.45 + inset;
@@ -175,32 +175,37 @@ const createHouseBaseShape = (width, depth, holeConfig, inset = 0) => {
   const wallRightOriginal = w * 0.4;
   const wallTopOriginal = d * 0.05;
   
-  // Çizim başlangıcı: Sol alt köşe
-  shape.moveTo(wallLeft, bottom);
-  // 1. Sağ alt köşe
-  shape.lineTo(wallRight, bottom);
-  // 2. Sağ duvar üstü (saçak altı)
-  shape.lineTo(wallRight, wallTop);
-  // 3. Sağ saçak alt çizgisi
-  shape.lineTo(wallRightOriginal * 1.05 - inset * 1.1, wallTopOriginal + d * 0.02 + inset);
-  // 4. Sağ saçak ucu
-  shape.lineTo(overhangTipRight, overhangBottomY);
-  // 5. Baca sağ birleşim yerine kadar çatı eğimi
-  shape.lineTo(chimneyRight, chimneyRightRoofY);
-  // 6. Baca sağ kenarı yukarı
-  shape.lineTo(chimneyRight, chimneyTop);
-  // 7. Baca üstü yatay
-  shape.lineTo(chimneyLeft, chimneyTop);
-  // 8. Baca sol kenarı aşağı çatı çizgisine
-  shape.lineTo(chimneyLeft, chimneyLeftRoofY);
-  // 9. Çatı zirvesi (peak)
-  shape.lineTo(peakX, peakY);
-  // 10. Sol çatı eğimi sol saçak ucuna
-  shape.lineTo(overhangTipLeft, overhangBottomY);
-  // 11. Sol saçak alt çizgisi
-  shape.lineTo(-wallRightOriginal * 1.05 + inset * 1.1, wallTopOriginal + d * 0.02 + inset);
-  // 12. Sol duvar üstü (saçak altı)
-  shape.lineTo(wallLeft, wallTop);
+  if (isCW) {
+    // Saat Yönünde (CW) Çizim - Delikler (Holes) için
+    shape.moveTo(wallLeft, bottom);
+    shape.lineTo(wallLeft, wallTop);
+    shape.lineTo(-wallRightOriginal * 1.05 + inset * 1.1, wallTopOriginal + d * 0.02 + inset);
+    shape.lineTo(overhangTipLeft, overhangBottomY);
+    shape.lineTo(peakX, peakY);
+    shape.lineTo(chimneyLeft, chimneyLeftRoofY);
+    shape.lineTo(chimneyLeft, chimneyTop);
+    shape.lineTo(chimneyRight, chimneyTop);
+    shape.lineTo(chimneyRight, chimneyRightRoofY);
+    shape.lineTo(overhangTipRight, overhangBottomY);
+    shape.lineTo(wallRightOriginal * 1.05 - inset * 1.1, wallTopOriginal + d * 0.02 + inset);
+    shape.lineTo(wallRight, wallTop);
+    shape.lineTo(wallRight, bottom);
+  } else {
+    // Saat Yönünün Tersine (CCW) Çizim - Katı Şekiller (Solid Shapes) için
+    shape.moveTo(wallLeft, bottom);
+    shape.lineTo(wallRight, bottom);
+    shape.lineTo(wallRight, wallTop);
+    shape.lineTo(wallRightOriginal * 1.05 - inset * 1.1, wallTopOriginal + d * 0.02 + inset);
+    shape.lineTo(overhangTipRight, overhangBottomY);
+    shape.lineTo(chimneyRight, chimneyRightRoofY);
+    shape.lineTo(chimneyRight, chimneyTop);
+    shape.lineTo(chimneyLeft, chimneyTop);
+    shape.lineTo(chimneyLeft, chimneyLeftRoofY);
+    shape.lineTo(peakX, peakY);
+    shape.lineTo(overhangTipLeft, overhangBottomY);
+    shape.lineTo(-wallRightOriginal * 1.05 + inset * 1.1, wallTopOriginal + d * 0.02 + inset);
+    shape.lineTo(wallLeft, wallTop);
+  }
   
   shape.closePath();
   
@@ -575,17 +580,21 @@ export const Scene3D = ({
     const outer = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 1.0, baseD - 1.0)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW, baseD, null, 0.5)
+        ? createHouseBaseShape(baseW, baseD, null, 0.5, false)
         : createRoundedRectShape(baseW - 1.0, baseD - 1.0, Math.min(5, baseW/2, baseD/2)));
     
     const inner = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 3.0, baseD - 3.0)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW, baseD, null, 1.5)
+        ? createHouseBaseShape(baseW, baseD, null, 1.5, true)
         : createRoundedRectShape(baseW - 3.0, baseD - 3.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1)));
     
     const frame = outer.clone();
-    frame.holes.push(new THREE.Path().setFromPoints(inner.getPoints(128).reverse()));
+    if (selectedShape === 'house') {
+      frame.holes.push(inner);
+    } else {
+      frame.holes.push(new THREE.Path().setFromPoints(inner.getPoints(128).reverse()));
+    }
     return frame;
   }, [selectedShape, baseW, baseD]);
 
@@ -594,29 +603,35 @@ export const Scene3D = ({
     const outer1 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 1.0, baseD - 1.0)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW, baseD, null, 0.5)
+        ? createHouseBaseShape(baseW, baseD, null, 0.5, false)
         : createRoundedRectShape(baseW - 1.0, baseD - 1.0, Math.min(5, baseW/2, baseD/2)));
     const inner1 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 2.5, baseD - 2.5)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW, baseD, null, 1.25)
+        ? createHouseBaseShape(baseW, baseD, null, 1.25, true)
         : createRoundedRectShape(baseW - 2.5, baseD - 2.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 0.7)));
     
     const outer2 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 4.5, baseD - 4.5)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW, baseD, null, 2.25)
+        ? createHouseBaseShape(baseW, baseD, null, 2.25, true)
         : createRoundedRectShape(baseW - 4.5, baseD - 4.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1.5)));
     const inner2 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 6.0, baseD - 6.0)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW, baseD, null, 3.0)
+        ? createHouseBaseShape(baseW, baseD, null, 3.0, true)
         : createRoundedRectShape(baseW - 6.0, baseD - 6.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2.2)));
 
     const frame = outer1.clone();
-    frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints(128).reverse()));
-    frame.holes.push(new THREE.Path().setFromPoints(outer2.getPoints(128).reverse()));
-    frame.holes.push(new THREE.Path().setFromPoints(inner2.getPoints(128).reverse()));
+    if (selectedShape === 'house') {
+      frame.holes.push(inner1);
+      frame.holes.push(outer2);
+      frame.holes.push(inner2);
+    } else {
+      frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints(128).reverse()));
+      frame.holes.push(new THREE.Path().setFromPoints(outer2.getPoints(128).reverse()));
+      frame.holes.push(new THREE.Path().setFromPoints(inner2.getPoints(128).reverse()));
+    }
     return frame;
   }, [selectedShape, baseW, baseD]);
 
