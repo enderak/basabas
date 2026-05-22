@@ -82,7 +82,7 @@ const App = () => {
         {/* Left Column: Settings */}
         <div className="w-full md:w-auto flex flex-col gap-6 items-center md:items-start z-10 shrink-0">
           {/* Branding Header (Moved to top) */}
-          <div className="relative w-full max-w-sm flex flex-col items-center gap-3 text-center bg-white p-6 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 overflow-hidden group/card">
+          <div className="relative w-full max-w-md flex flex-col items-center gap-3 text-center bg-white p-6 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 overflow-hidden group/card">
             <a 
               href="https://www.sakrad.org/hakkimizda/" 
               target="_blank" 
@@ -178,7 +178,7 @@ const App = () => {
           />
 
           {/* AMS Bilgi Kutusu */}
-          <div className="flex flex-col gap-3 w-full max-w-sm">
+          <div className="flex flex-col gap-3 w-full max-w-md">
             <div className="bg-emerald-50 p-4 rounded-xl shadow-sm border border-emerald-100/50 flex gap-3 text-sm text-emerald-800/80">
               <span className="text-lg shrink-0 mt-0.5">🎨</span>
               <p className="leading-tight text-[12px]">

@@ -71,6 +71,7 @@ export const SettingsCard = ({
   onExport 
 }) => {
   const { t, i18n } = useTranslation();
+  const [activeTab, setActiveTab] = React.useState('text'); // 'text', 'icons', 'base'
 
   const colors = [
     { value: '#22C55E', label: 'Sakarya Green' }, 
@@ -83,7 +84,7 @@ export const SettingsCard = ({
   const hasAnyIcon = iconTopType !== 'none' || iconBottomType !== 'none';
 
   return (
-    <div className="bg-white p-6 sm:p-8 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 flex flex-col gap-6 w-full max-w-sm shrink-0 overflow-y-auto max-h-[90vh]">
+    <div className="bg-white p-6 sm:p-8 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 flex flex-col gap-6 w-full max-w-md shrink-0 overflow-y-auto max-h-[90vh]">
       
       {/* Language Selector */}
       <div className="flex flex-col gap-2">
@@ -98,6 +99,7 @@ export const SettingsCard = ({
           ].map((lang) => (
             <button
               key={lang.code}
+              type="button"
               onClick={() => i18n.changeLanguage(lang.code)}
               className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-all flex items-center justify-center ${
                 i18n.language === lang.code 
@@ -111,362 +113,438 @@ export const SettingsCard = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 border-b border-slate-100 pb-5">
-        {/* YAZI TİPİ (FONT) SEÇİMİ */}
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('font_family')}</label>
-          <div className="relative">
-            <select
-              value={fontFamily}
-              onChange={(e) => setFontFamily(e.target.value)}
-              className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
-            >
-              <option value="plus">Jakarta Sans (TR Support)</option>
-              <option value="droid">Droid Sans</option>
-              <option value="helvetiker">Helvetiker</option>
-              <option value="optimer">Optimer</option>
-            </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      {/* Tab Navigation */}
+      <div className="bg-slate-100/80 p-1 rounded-2xl flex gap-1 mb-1 shadow-sm">
+        <button
+          type="button"
+          onClick={() => setActiveTab('text')}
+          className={`flex-1 py-2 rounded-xl text-[10px] font-extrabold tracking-wider transition-all duration-300 flex flex-col items-center gap-1 border border-transparent ${
+            activeTab === 'text'
+              ? 'bg-white text-emerald-600 shadow-sm border-slate-100'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <span className="text-sm">✍️</span>
+          <span>{t('tab_text_font')}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('icons')}
+          className={`flex-1 py-2 rounded-xl text-[10px] font-extrabold tracking-wider transition-all duration-300 flex flex-col items-center gap-1 border border-transparent ${
+            activeTab === 'icons'
+              ? 'bg-white text-emerald-600 shadow-sm border-slate-100'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <span className="text-sm">🎨</span>
+          <span>{t('tab_icons_decor')}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('base')}
+          className={`flex-1 py-2 rounded-xl text-[10px] font-extrabold tracking-wider transition-all duration-300 flex flex-col items-center gap-1 border border-transparent ${
+            activeTab === 'base'
+              ? 'bg-white text-emerald-600 shadow-sm border-slate-100'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <span className="text-sm">🔩</span>
+          <span>{t('tab_base_handle')}</span>
+        </button>
+      </div>
+
+      {/* Tab Content 1: Yazı & Font */}
+      {activeTab === 'text' && (
+        <div className="flex flex-col gap-5">
+          {/* YAZI TİPİ (FONT) SEÇİMİ */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('font_family')}</label>
+            <div className="relative">
+              <select
+                value={fontFamily}
+                onChange={(e) => setFontFamily(e.target.value)}
+                className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+              >
+                <option value="plus">Jakarta Sans (TR Support)</option>
+                <option value="droid">Droid Sans</option>
+                <option value="helvetiker">Helvetiker</option>
+                <option value="optimer">Optimer</option>
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Metin Girişleri */}
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-bold text-slate-500">{t('label_text')}</label>
-            <input 
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
-              placeholder={t('placeholder_text')}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-bold text-slate-500">{t('mid_text')}</label>
-            <input 
-              value={midText}
-              onChange={(e) => setMidText(e.target.value)}
-              className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
-              placeholder={t('placeholder_mid_text')}
-            />
-          </div>
-          
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-bold text-slate-500">{t('sub_text')}</label>
-            <input 
-              value={subText}
-              onChange={(e) => setSubText(e.target.value)}
-              className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
-              placeholder={t('placeholder_sub_text')}
-            />
-          </div>
-        </div>
-
-        {/* Metin Boyutları Sliderları */}
-        <div className="flex flex-col gap-4 pt-2 border-t border-slate-100">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('text_sizes')}</label>
-          
-          <RangeInput 
-            label={t('label_text')}
-            value={textScaleMain}
-            min="20" max="150" step="1"
-            onChange={setTextScaleMain}
-          />
-
-          {midText && (
-            <RangeInput 
-              label={t('mid_text')}
-              value={textScaleMid}
-              min="20" max="150" step="1"
-              onChange={setTextScaleMid}
-            />
-          )}
-
-          {subText && (
-            <RangeInput 
-              label={t('sub_text')}
-              value={textScaleSub}
-              min="20" max="150" step="1"
-              onChange={setTextScaleSub}
-            />
-          )}
-        </div>
-      </div>
-
-      {/* Fiziksel Ayarlar */}
-      <div className="flex flex-col gap-5">
-        
-        <RangeInput 
-          label={t('text_depth')}
-          value={textDepth}
-          min="0.5" max="5.0" step="0.1"
-          suffix="mm"
-          onChange={setTextDepth}
-        />
-
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('transform')}</label>
-          <div className="bg-slate-100/80 p-1 rounded-xl flex items-center h-11 w-full relative">
-            <button 
-              onClick={() => setIsItalic(false)}
-              className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
-                !isItalic ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              {t('normal_text')}
-            </button>
-            <button 
-              onClick={() => setIsItalic(true)}
-              className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors italic ${
-                isItalic ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              {t('italic')}
-            </button>
-          </div>
-        </div>
-
-        <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100/80 transition-colors">
-          <div className="relative flex items-center">
-            <input 
-              type="checkbox" 
-              checked={isMirrored}
-              onChange={(e) => setIsMirrored(e.target.checked)}
-              className="peer sr-only"
-            />
-            <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
-          </div>
-          <span className="text-xs font-bold text-emerald-800">{t('is_mirrored')}</span>
-        </label>
-      </div>
-
-      {/* Simgeler ve Ayraç */}
-      <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_top')}</label>
-          <select
-            value={iconTopType}
-            onChange={(e) => setIconTopType(e.target.value)}
-            className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
-          >
-            <option value="none">{t('icon_none')}</option>
-            <option value="olive_detailed">{t('icon_olive_detailed')} 🌿</option>
-            <option value="clover">{t('icon_clover')} 🍀</option>
-            <option value="star_crescent">{t('icon_star_crescent')} 🌙</option>
-            <option value="heart">{t('icon_heart')} ❤️</option>
-            <option value="daphne">{t('icon_daphne')} 🌿</option>
-            <option value="custom">{t('icon_custom')} 📁</option>
-          </select>
-        </div>
-
-        <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-inner">
-           <div className="flex flex-col">
-              <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">{t('has_divider')}</span>
-              <span className="text-[9px] text-slate-400">Metinler arası desen</span>
-           </div>
-           <button 
-             onClick={() => setHasDivider(!hasDivider)}
-             className={`w-12 h-6 rounded-full relative transition-colors ${hasDivider ? 'bg-emerald-500' : 'bg-slate-300'}`}
-           >
-             <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${hasDivider ? 'left-7' : 'left-1'}`} />
-           </button>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_bottom')}</label>
-          <select
-            value={iconBottomType}
-            onChange={(e) => setIconBottomType(e.target.value)}
-            className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
-          >
-            <option value="none">{t('icon_none')}</option>
-            <option value="ornament">{t('icon_ornament')} ⚜</option>
-            <option value="leaf">{t('icon_leaf')} 🍃</option>
-            <option value="clover">{t('icon_clover')} 🍀</option>
-          </select>
-        </div>
-
-        {hasAnyIcon && (
+          {/* Metin Girişleri */}
           <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-bold text-slate-500">{t('label_text')}</label>
+              <input 
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
+                placeholder={t('placeholder_text')}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-bold text-slate-500">{t('mid_text')}</label>
+              <input 
+                value={midText}
+                onChange={(e) => setMidText(e.target.value)}
+                className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
+                placeholder={t('placeholder_mid_text')}
+              />
+            </div>
+            
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-bold text-slate-500">{t('sub_text')}</label>
+              <input 
+                value={subText}
+                onChange={(e) => setSubText(e.target.value)}
+                className="w-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 py-2.5 px-4 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 transition-all shadow-sm"
+                placeholder={t('placeholder_sub_text')}
+              />
+            </div>
+          </div>
+
+          {/* Metin Boyutları Sliderları */}
+          <div className="flex flex-col gap-4 pt-4 border-t border-slate-100">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('text_sizes')}</label>
+            
             <RangeInput 
-              label={t('icon_depth')}
-              value={iconDepth}
+              label={t('label_text')}
+              value={textScaleMain}
+              min="20" max="150" step="1"
+              onChange={setTextScaleMain}
+            />
+
+            {midText && (
+              <RangeInput 
+                label={t('mid_text')}
+                value={textScaleMid}
+                min="20" max="150" step="1"
+                onChange={setTextScaleMid}
+              />
+            )}
+
+            {subText && (
+              <RangeInput 
+                label={t('sub_text')}
+                value={textScaleSub}
+                min="20" max="150" step="1"
+                onChange={setTextScaleSub}
+              />
+            )}
+          </div>
+
+          {/* Metin Transformasyon ve Fiziksel Derinlik */}
+          <div className="flex flex-col gap-4 pt-4 border-t border-slate-100">
+            <RangeInput 
+              label={t('text_depth')}
+              value={textDepth}
               min="0.5" max="5.0" step="0.1"
               suffix="mm"
-              onChange={setIconDepth}
+              onChange={setTextDepth}
             />
-            <RangeInput 
-              label="Simge Boyutu"
-              value={iconScale}
-              min="20" max="200" step="5"
-              onChange={setIconScale}
-            />
-          </div>
-        )}
-      </div>
 
-      {/* Renk Seçimi */}
-      <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500">{t('label_text_color')}</label>
-          <div className="flex gap-3">
-            {colors.map((color) => (
-              <button
-                key={color.value}
-                onClick={() => setMaterialColor(color.value)}
-                className={`w-8 h-8 rounded-full relative transition-transform hover:scale-110 shadow-sm ${
-                  materialColor === color.value ? 'ring-2 ring-offset-2 ring-emerald-500 scale-110' : ''
-                }`}
-                style={{ backgroundColor: color.value }}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500">{t('label_base_color')}</label>
-          <div className="flex gap-3">
-            {colors.map((color) => (
-              <button
-                key={color.value}
-                onClick={() => setBaseColor(color.value)}
-                className={`w-8 h-8 rounded-full relative transition-transform hover:scale-110 shadow-sm ${
-                  baseColor === color.value ? 'ring-2 ring-offset-2 ring-emerald-500 scale-110' : ''
-                }`}
-                style={{ backgroundColor: color.value }}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500">{t('label_handle_color')}</label>
-          <div className="flex gap-3">
-            {colors.map((color) => (
-              <button
-                key={color.value}
-                onClick={() => setHandleColor(color.value)}
-                className={`w-8 h-8 rounded-full relative transition-transform hover:scale-110 shadow-sm ${
-                  handleColor === color.value ? 'ring-2 ring-offset-2 ring-emerald-500 scale-110' : ''
-                }`}
-                style={{ backgroundColor: color.value }}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('transform')}</label>
+              <div className="bg-slate-100/80 p-1 rounded-xl flex items-center h-11 w-full relative">
+                <button 
+                  type="button"
+                  onClick={() => setIsItalic(false)}
+                  className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
+                    !isItalic ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400 hover:text-slate-600'
+                  }`}
+                >
+                  {t('normal_text')}
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setIsItalic(true)}
+                  className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors italic ${
+                    isItalic ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400 hover:text-slate-600'
+                  }`}
+                >
+                  {t('italic')}
+                </button>
+              </div>
+            </div>
 
-      {/* Taban ve Sap Ayarları */}
-      <div className="flex flex-col gap-5 pt-3 border-t border-slate-100">
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('base_shape')}</label>
-          <div className="bg-slate-100/80 p-1 rounded-xl flex items-center h-11 w-full relative">
-            <button 
-              onClick={() => setBaseShape('rectangle')}
-              className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
-                baseShape === 'rectangle' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              {t('shape_rectangle')}
-            </button>
-            <button 
-              onClick={() => setBaseShape('circle')}
-              className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
-                baseShape === 'circle' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              {t('shape_circle')}
-            </button>
+            <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100/80 transition-colors mt-1">
+              <div className="relative flex items-center">
+                <input 
+                  type="checkbox" 
+                  checked={isMirrored}
+                  onChange={(e) => setIsMirrored(e.target.checked)}
+                  className="peer sr-only"
+                />
+                <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+              </div>
+              <span className="text-xs font-bold text-emerald-800">{t('is_mirrored')}</span>
+            </label>
           </div>
         </div>
+      )}
 
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('rim_type')}</label>
-          <select
-            value={rimType}
-            onChange={(e) => setRimType(e.target.value)}
-            className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
-          >
-            <option value="none">{t('rim_none')}</option>
-            <option value="simple">{t('rim_simple')}</option>
-            <option value="double">{t('rim_double')}</option>
-            <option value="dotted">{t('rim_dotted')}</option>
-            <option value="scalloped">{t('rim_scalloped')}</option>
-            <option value="greek">{t('rim_greek')}</option>
-            <option value="zigzag">{t('rim_zigzag')}</option>
-            <option value="wave">{t('rim_wave')}</option>
-            <option value="double_dotted">{t('rim_double_dotted')}</option>
-            <option value="palace">{t('rim_palace')}</option>
-          </select>
-        </div>
-
+      {/* Tab Content 2: Simge & Desen */}
+      {activeTab === 'icons' && (
         <div className="flex flex-col gap-5">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('handle_settings')}</label>
-          
-          <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100/80 transition-colors">
-            <div className="relative flex items-center">
-              <input 
-                type="checkbox" 
-                checked={hasHandle}
-                onChange={(e) => setHasHandle(e.target.checked)}
-                className="peer sr-only"
-              />
-              <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_top')}</label>
+            <div className="relative">
+              <select
+                value={iconTopType}
+                onChange={(e) => setIconTopType(e.target.value)}
+                className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+              >
+                <option value="none">{t('icon_none')}</option>
+                <option value="olive_detailed">{t('icon_olive_detailed')} 🌿</option>
+                <option value="clover">{t('icon_clover')} 🍀</option>
+                <option value="star_crescent">{t('icon_star_crescent')} 🌙</option>
+                <option value="heart">{t('icon_heart')} ❤️</option>
+                <option value="daphne">{t('icon_daphne')} 🌿</option>
+                <option value="custom">{t('icon_custom')} 📁</option>
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-emerald-900">{t('has_handle')}</span>
-              <span className="text-[9px] text-emerald-700/70 leading-none">{t('has_handle_desc')}</span>
+          </div>
+
+          <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-inner">
+             <div className="flex flex-col">
+                <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">{t('has_divider')}</span>
+                <span className="text-[9px] text-slate-400">Metinler arası desen</span>
+             </div>
+             <button 
+               type="button"
+               onClick={() => setHasDivider(!hasDivider)}
+               className={`w-12 h-6 rounded-full relative transition-colors ${hasDivider ? 'bg-emerald-500' : 'bg-slate-300'}`}
+             >
+               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${hasDivider ? 'left-7' : 'left-1'}`} />
+             </button>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('icon_bottom')}</label>
+            <div className="relative">
+              <select
+                value={iconBottomType}
+                onChange={(e) => setIconBottomType(e.target.value)}
+                className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+              >
+                <option value="none">{t('icon_none')}</option>
+                <option value="ornament">{t('icon_ornament')} ⚜</option>
+                <option value="leaf">{t('icon_leaf')} 🍃</option>
+                <option value="clover">{t('icon_clover')} 🍀</option>
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
             </div>
-          </label>
+          </div>
 
-          <RangeInput 
-            label="Tabla Kalınlığı"
-            value={baseHeight}
-            min="2" max="25" step="1"
-            suffix="mm"
-            onChange={setBaseHeight}
-          />
-
-          {hasHandle && (
-            <>
+          {hasAnyIcon && (
+            <div className="flex flex-col gap-4 pt-4 border-t border-slate-100">
               <RangeInput 
-                label={t('handle_height')}
-                value={handleHeight}
-                min="10" max="60" step="1"
+                label={t('icon_depth')}
+                value={iconDepth}
+                min="0.5" max="5.0" step="0.1"
                 suffix="mm"
-                onChange={setHandleHeight}
+                onChange={setIconDepth}
               />
               <RangeInput 
-                label={t('handle_radius')}
-                value={handleRadius}
-                min="5" max="25" step="1"
-                suffix="mm"
-                onChange={setHandleRadius}
+                label="Simge Boyutu"
+                value={iconScale}
+                min="20" max="200" step="5"
+                onChange={setIconScale}
               />
-              <label className="flex items-center gap-3 p-3 bg-emerald-50/50 border border-emerald-100/60 rounded-xl cursor-pointer hover:bg-emerald-100/60 transition-colors">
-                <div className="relative flex items-center">
-                  <input 
-                    type="checkbox" 
-                    checked={isHandleRemovable}
-                    onChange={(e) => setIsHandleRemovable(e.target.checked)}
-                    className="peer sr-only"
-                  />
-                  <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-emerald-900">{t('handle_removable')}</span>
-                  <span className="text-[9px] text-emerald-700/70 leading-none">{t('handle_removable_desc')}</span>
-                </div>
-              </label>
-            </>
+            </div>
           )}
         </div>
-      </div>
+      )}
+
+      {/* Tab Content 3: Taban & Sap */}
+      {activeTab === 'base' && (
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('base_shape')}</label>
+            <div className="bg-slate-100/80 p-1 rounded-xl flex items-center h-11 w-full relative">
+              <button 
+                type="button"
+                onClick={() => setBaseShape('rectangle')}
+                className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
+                  baseShape === 'rectangle' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                {t('shape_rectangle')}
+              </button>
+              <button 
+                type="button"
+                onClick={() => setBaseShape('circle')}
+                className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
+                  baseShape === 'circle' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                {t('shape_circle')}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('rim_type')}</label>
+            <div className="relative">
+              <select
+                value={rimType}
+                onChange={(e) => setRimType(e.target.value)}
+                className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+              >
+                <option value="none">{t('rim_none')}</option>
+                <option value="simple">{t('rim_simple')}</option>
+                <option value="double">{t('rim_double')}</option>
+                <option value="dotted">{t('rim_dotted')}</option>
+                <option value="scalloped">{t('rim_scalloped')}</option>
+                <option value="greek">{t('rim_greek')}</option>
+                <option value="zigzag">{t('rim_zigzag')}</option>
+                <option value="wave">{t('rim_wave')}</option>
+                <option value="double_dotted">{t('rim_double_dotted')}</option>
+                <option value="palace">{t('rim_palace')}</option>
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4 pt-4 border-t border-slate-100">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('handle_settings')}</label>
+            
+            <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100/80 transition-colors">
+              <div className="relative flex items-center">
+                <input 
+                  type="checkbox" 
+                  checked={hasHandle}
+                  onChange={(e) => setHasHandle(e.target.checked)}
+                  className="peer sr-only"
+                />
+                <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-bold text-emerald-900">{t('has_handle')}</span>
+                <span className="text-[9px] text-emerald-700/70 leading-none">{t('has_handle_desc')}</span>
+              </div>
+            </label>
+
+            <RangeInput 
+              label="Tabla Kalınlığı"
+              value={baseHeight}
+              min="2" max="25" step="1"
+              suffix="mm"
+              onChange={setBaseHeight}
+            />
+
+            {hasHandle && (
+              <>
+                <RangeInput 
+                  label={t('handle_height')}
+                  value={handleHeight}
+                  min="10" max="60" step="1"
+                  suffix="mm"
+                  onChange={setHandleHeight}
+                />
+                <RangeInput 
+                  label={t('handle_radius')}
+                  value={handleRadius}
+                  min="5" max="25" step="1"
+                  suffix="mm"
+                  onChange={setHandleRadius}
+                />
+                <label className="flex items-center gap-3 p-3 bg-emerald-50/50 border border-emerald-100/60 rounded-xl cursor-pointer hover:bg-emerald-100/60 transition-colors">
+                  <div className="relative flex items-center">
+                    <input 
+                      type="checkbox" 
+                      checked={isHandleRemovable}
+                      onChange={(e) => setIsHandleRemovable(e.target.checked)}
+                      className="peer sr-only"
+                    />
+                    <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold text-emerald-900">{t('handle_removable')}</span>
+                    <span className="text-[9px] text-emerald-700/70 leading-none">{t('handle_removable_desc')}</span>
+                  </div>
+                </label>
+              </>
+            )}
+          </div>
+
+          {/* Renk Seçimi */}
+          <div className="flex flex-col gap-4 pt-4 border-t border-slate-100">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('filament_color')}</label>
+            
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-bold text-slate-500">{t('label_text_color')}</label>
+              <div className="flex gap-2">
+                {colors.map((color) => (
+                  <button
+                    key={color.value}
+                    type="button"
+                    onClick={() => setMaterialColor(color.value)}
+                    className={`w-8 h-8 rounded-full relative transition-transform hover:scale-110 shadow-sm ${
+                      materialColor === color.value ? 'ring-2 ring-offset-2 ring-emerald-500 scale-110' : ''
+                    }`}
+                    style={{ backgroundColor: color.value }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-bold text-slate-500">{t('label_base_color')}</label>
+              <div className="flex gap-2">
+                {colors.map((color) => (
+                  <button
+                    key={color.value}
+                    type="button"
+                    onClick={() => setBaseColor(color.value)}
+                    className={`w-8 h-8 rounded-full relative transition-transform hover:scale-110 shadow-sm ${
+                      baseColor === color.value ? 'ring-2 ring-offset-2 ring-emerald-500 scale-110' : ''
+                    }`}
+                    style={{ backgroundColor: color.value }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {hasHandle && (
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold text-slate-500">{t('label_handle_color')}</label>
+                <div className="flex gap-2">
+                  {colors.map((color) => (
+                    <button
+                      key={color.value}
+                      type="button"
+                      onClick={() => setHandleColor(color.value)}
+                      className={`w-8 h-8 rounded-full relative transition-transform hover:scale-110 shadow-sm ${
+                        handleColor === color.value ? 'ring-2 ring-offset-2 ring-emerald-500 scale-110' : ''
+                      }`}
+                      style={{ backgroundColor: color.value }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Export Buttons */}
-      <div className="flex flex-col gap-3 mt-auto pt-4">
+      <div className="flex flex-col gap-3 mt-auto pt-4 border-t border-slate-100">
         <button 
+          type="button"
           onClick={() => onExport(false)}
           className="w-full bg-[#059669] hover:bg-emerald-700 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-emerald-200"
         >
@@ -474,6 +552,7 @@ export const SettingsCard = ({
           {t('export_single')}
         </button>
         <button 
+          type="button"
           onClick={() => onExport(true)}
           className="w-full bg-slate-800 hover:bg-slate-900 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-slate-200"
         >

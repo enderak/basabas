@@ -4,6 +4,9 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   TR: {
     translation: {
+      "tab_text_font": "Yazı & Font",
+      "tab_icons_decor": "Simge & Desen",
+      "tab_base_handle": "Taban & Sap",
       "title": "SAKRAD MÜHÜR ÜRETİCİ",
       "settings_title": "Mühür Ayarları",
       "settings_desc": "3D mühür tasarımınızı kişiselleştirin",
@@ -105,6 +108,9 @@ const resources = {
   },
   EN: {
     translation: {
+      "tab_text_font": "Text & Font",
+      "tab_icons_decor": "Icon & Pattern",
+      "tab_base_handle": "Base & Handle",
       "title": "SAKRAD SEAL CREATOR",
       "settings_title": "Seal Settings",
       "settings_desc": "Customize your 3D seal design",
