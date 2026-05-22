@@ -137,35 +137,43 @@ const createCircleBaseShape = (width, depth, holeConfig) => {
 };
 
 // Ev (House) taban şekli - Hassas parametrik çizim (Saçaklar ve baca ile)
-const createHouseBaseShape = (width, depth, holeConfig) => {
+const createHouseBaseShape = (width, depth, holeConfig, inset = 0) => {
   const shape = new THREE.Shape();
   const w = width;
   const d = depth;
   
   // Evin sınırları (CCW yönünde)
-  const wallLeft = -w * 0.4;
-  const wallRight = w * 0.4;
-  const bottom = -d * 0.45;
-  const wallTop = d * 0.05;
-  const overhangTipLeft = -w * 0.48;
-  const overhangTipRight = w * 0.48;
-  const overhangBottomY = d * 0.09;
-  const peakY = d * 0.46;
+  const wallLeft = -w * 0.4 + inset;
+  const wallRight = w * 0.4 - inset;
+  const bottom = -d * 0.45 + inset;
+  const wallTop = d * 0.05 + inset;
+  
+  // Saçak kısımları için inset ötelemeleri
+  const overhangTipLeft = -w * 0.48 + inset * 1.2;
+  const overhangTipRight = w * 0.48 - inset * 1.2;
+  const overhangBottomY = d * 0.09 + inset;
+  
+  // Çatı zirvesi (peak)
+  const peakY = d * 0.46 - inset * 1.4;
   const peakX = 0;
   
   // Baca koordinatları (Sağ tarafta)
-  const chimneyLeft = w * 0.18;
-  const chimneyRight = w * 0.36;
-  const chimneyTop = d * 0.42;
+  const chimneyLeft = w * 0.18 + inset;
+  const chimneyRight = w * 0.36 - inset;
+  const chimneyTop = d * 0.42 - inset;
   
   // Çatı eğim çizgisi formülü: y = peakY + slope * x
   // peak'ten sağ saçak ucuna eğim (slope):
   // m = (overhangBottomY - peakY) / (overhangTipRight - peakX)
-  const slope = (overhangBottomY - peakY) / overhangTipRight;
+  const slope = (overhangBottomY - peakY) / (overhangTipRight - peakX);
   const getRoofY = (x) => peakY + slope * x;
   
   const chimneyLeftRoofY = getRoofY(chimneyLeft);
   const chimneyRightRoofY = getRoofY(chimneyRight);
+  
+  // Orijinal referans değerleri (Saçak alt çizgisi için sabit orantı)
+  const wallRightOriginal = w * 0.4;
+  const wallTopOriginal = d * 0.05;
   
   // Çizim başlangıcı: Sol alt köşe
   shape.moveTo(wallLeft, bottom);
@@ -174,7 +182,7 @@ const createHouseBaseShape = (width, depth, holeConfig) => {
   // 2. Sağ duvar üstü (saçak altı)
   shape.lineTo(wallRight, wallTop);
   // 3. Sağ saçak alt çizgisi
-  shape.lineTo(wallRight * 1.05, wallTop + d * 0.02);
+  shape.lineTo(wallRightOriginal * 1.05 - inset * 1.1, wallTopOriginal + d * 0.02 + inset);
   // 4. Sağ saçak ucu
   shape.lineTo(overhangTipRight, overhangBottomY);
   // 5. Baca sağ birleşim yerine kadar çatı eğimi
@@ -190,7 +198,7 @@ const createHouseBaseShape = (width, depth, holeConfig) => {
   // 10. Sol çatı eğimi sol saçak ucuna
   shape.lineTo(overhangTipLeft, overhangBottomY);
   // 11. Sol saçak alt çizgisi
-  shape.lineTo(-wallRight * 1.05, wallTop + d * 0.02);
+  shape.lineTo(-wallRightOriginal * 1.05 + inset * 1.1, wallTopOriginal + d * 0.02 + inset);
   // 12. Sol duvar üstü (saçak altı)
   shape.lineTo(wallLeft, wallTop);
   
@@ -567,13 +575,13 @@ export const Scene3D = ({
     const outer = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 1.0, baseD - 1.0)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW - 1.0, baseD - 1.0)
+        ? createHouseBaseShape(baseW, baseD, null, 0.5)
         : createRoundedRectShape(baseW - 1.0, baseD - 1.0, Math.min(5, baseW/2, baseD/2)));
     
     const inner = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 3.0, baseD - 3.0)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW - 3.0, baseD - 3.0)
+        ? createHouseBaseShape(baseW, baseD, null, 1.5)
         : createRoundedRectShape(baseW - 3.0, baseD - 3.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1)));
     
     const frame = outer.clone();
@@ -586,23 +594,23 @@ export const Scene3D = ({
     const outer1 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 1.0, baseD - 1.0)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW - 1.0, baseD - 1.0)
+        ? createHouseBaseShape(baseW, baseD, null, 0.5)
         : createRoundedRectShape(baseW - 1.0, baseD - 1.0, Math.min(5, baseW/2, baseD/2)));
     const inner1 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 2.5, baseD - 2.5)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW - 2.5, baseD - 2.5)
+        ? createHouseBaseShape(baseW, baseD, null, 1.25)
         : createRoundedRectShape(baseW - 2.5, baseD - 2.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 0.7)));
     
     const outer2 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 4.5, baseD - 4.5)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW - 4.5, baseD - 4.5)
+        ? createHouseBaseShape(baseW, baseD, null, 2.25)
         : createRoundedRectShape(baseW - 4.5, baseD - 4.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1.5)));
     const inner2 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 6.0, baseD - 6.0)
       : (selectedShape === 'house'
-        ? createHouseBaseShape(baseW - 6.0, baseD - 6.0)
+        ? createHouseBaseShape(baseW, baseD, null, 3.0)
         : createRoundedRectShape(baseW - 6.0, baseD - 6.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2.2)));
 
     const frame = outer1.clone();
