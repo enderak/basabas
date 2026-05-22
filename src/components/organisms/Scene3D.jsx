@@ -585,7 +585,7 @@ export const Scene3D = ({
         : createRoundedRectShape(baseW - 3.0, baseD - 3.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1)));
     
     const frame = outer.clone();
-    frame.holes.push(new THREE.Path().setFromPoints(inner.getPoints(128)));
+    frame.holes.push(new THREE.Path().setFromPoints(inner.getPoints(128).reverse()));
     return frame;
   }, [selectedShape, baseW, baseD]);
 
@@ -614,9 +614,9 @@ export const Scene3D = ({
         : createRoundedRectShape(baseW - 6.0, baseD - 6.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2.2)));
 
     const frame = outer1.clone();
-    frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints(128)));
-    frame.holes.push(new THREE.Path().setFromPoints(outer2.getPoints(128)));
-    frame.holes.push(new THREE.Path().setFromPoints(inner2.getPoints(128)));
+    frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints(128).reverse()));
+    frame.holes.push(new THREE.Path().setFromPoints(outer2.getPoints(128).reverse()));
+    frame.holes.push(new THREE.Path().setFromPoints(inner2.getPoints(128).reverse()));
     return frame;
   }, [selectedShape, baseW, baseD]);
 
