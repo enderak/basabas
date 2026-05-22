@@ -376,7 +376,7 @@ export const SettingsCard = ({
               <button 
                 type="button"
                 onClick={() => setBaseShape('rectangle')}
-                className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
+                className={`z-10 flex-1 text-[10px] font-bold tracking-wide rounded-lg h-full transition-colors ${
                   baseShape === 'rectangle' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
@@ -384,8 +384,26 @@ export const SettingsCard = ({
               </button>
               <button 
                 type="button"
+                onClick={() => setBaseShape('square')}
+                className={`z-10 flex-1 text-[10px] font-bold tracking-wide rounded-lg h-full transition-colors ${
+                  baseShape === 'square' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                {t('shape_square')}
+              </button>
+              <button 
+                type="button"
+                onClick={() => setBaseShape('house')}
+                className={`z-10 flex-1 text-[10px] font-bold tracking-wide rounded-lg h-full transition-colors ${
+                  baseShape === 'house' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                {t('shape_house')}
+              </button>
+              <button 
+                type="button"
                 onClick={() => setBaseShape('circle')}
-                className={`z-10 flex-1 text-[11px] font-bold tracking-wider rounded-lg h-full transition-colors ${
+                className={`z-10 flex-1 text-[10px] font-bold tracking-wide rounded-lg h-full transition-colors ${
                   baseShape === 'circle' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'
                 }`}
               >

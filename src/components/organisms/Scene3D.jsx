@@ -136,6 +136,76 @@ const createCircleBaseShape = (width, depth, holeConfig) => {
   return shape;
 };
 
+// Ev (House) taban şekli - Hassas parametrik çizim (Saçaklar ve baca ile)
+const createHouseBaseShape = (width, depth, holeConfig) => {
+  const shape = new THREE.Shape();
+  const w = width;
+  const d = depth;
+  
+  // Evin sınırları (CCW yönünde)
+  const wallLeft = -w * 0.4;
+  const wallRight = w * 0.4;
+  const bottom = -d * 0.45;
+  const wallTop = d * 0.05;
+  const overhangTipLeft = -w * 0.48;
+  const overhangTipRight = w * 0.48;
+  const overhangBottomY = d * 0.09;
+  const peakY = d * 0.46;
+  const peakX = 0;
+  
+  // Baca koordinatları (Sağ tarafta)
+  const chimneyLeft = w * 0.18;
+  const chimneyRight = w * 0.36;
+  const chimneyTop = d * 0.42;
+  
+  // Çatı eğim çizgisi formülü: y = peakY + slope * x
+  // peak'ten sağ saçak ucuna eğim (slope):
+  // m = (overhangBottomY - peakY) / (overhangTipRight - peakX)
+  const slope = (overhangBottomY - peakY) / overhangTipRight;
+  const getRoofY = (x) => peakY + slope * x;
+  
+  const chimneyLeftRoofY = getRoofY(chimneyLeft);
+  const chimneyRightRoofY = getRoofY(chimneyRight);
+  
+  // Çizim başlangıcı: Sol alt köşe
+  shape.moveTo(wallLeft, bottom);
+  // 1. Sağ alt köşe
+  shape.lineTo(wallRight, bottom);
+  // 2. Sağ duvar üstü (saçak altı)
+  shape.lineTo(wallRight, wallTop);
+  // 3. Sağ saçak alt çizgisi
+  shape.lineTo(wallRight * 1.05, wallTop + d * 0.02);
+  // 4. Sağ saçak ucu
+  shape.lineTo(overhangTipRight, overhangBottomY);
+  // 5. Baca sağ birleşim yerine kadar çatı eğimi
+  shape.lineTo(chimneyRight, chimneyRightRoofY);
+  // 6. Baca sağ kenarı yukarı
+  shape.lineTo(chimneyRight, chimneyTop);
+  // 7. Baca üstü yatay
+  shape.lineTo(chimneyLeft, chimneyTop);
+  // 8. Baca sol kenarı aşağı çatı çizgisine
+  shape.lineTo(chimneyLeft, chimneyLeftRoofY);
+  // 9. Çatı zirvesi (peak)
+  shape.lineTo(peakX, peakY);
+  // 10. Sol çatı eğimi sol saçak ucuna
+  shape.lineTo(overhangTipLeft, overhangBottomY);
+  // 11. Sol saçak alt çizgisi
+  shape.lineTo(-wallRight * 1.05, wallTop + d * 0.02);
+  // 12. Sol duvar üstü (saçak altı)
+  shape.lineTo(wallLeft, wallTop);
+  
+  shape.closePath();
+  
+  // Delik (Hole)
+  if (holeConfig) {
+    const holePath = new THREE.Path();
+    holePath.absarc(holeConfig.x, holeConfig.y, holeConfig.r, 0, Math.PI * 2, true);
+    shape.holes.push(holePath);
+  }
+  
+  return shape;
+};
+
 export const Scene3D = ({
   text,
   subText,
@@ -425,12 +495,19 @@ export const Scene3D = ({
   let baseW = actualContentW + 30; // Padding artırıldı (20 -> 30)
   let baseD = totalContentDepth + 30;
 
-  // Daire ise kare tabanlı bir daire oluştur
-  if (selectedShape === 'circle') {
+  // Daire, kare veya ev ise kare tabanlı (en-boy eşit) yapı oluştur
+  if (selectedShape === 'circle' || selectedShape === 'square' || selectedShape === 'house') {
     const size = Math.max(baseW, baseD);
     baseW = size;
     baseD = size;
   }
+
+  // Ev için dikdörtgen gövde merkezini hesapla (montaj ve yazı hizalaması için)
+  const rectCenterY = useMemo(() => {
+    const bottom = -baseD * 0.45;
+    const wallTop = baseD * 0.05;
+    return (bottom + wallTop) / 2;
+  }, [baseD]);
 
   // Calculate local centers
   const contentCenter = (pLeft - pRight) / 2;
@@ -442,7 +519,7 @@ export const Scene3D = ({
 
   const baseCenterX = 0; 
   const baseCenterZ = 0; 
-  const zCenterOffset = autoCenter ? 0 : textOffset;
+  const zCenterOffset = autoCenter ? (selectedShape === 'house' ? -rectCenterY : 0) : textOffset;
 
   const holeR = 3.5; 
   let holeX = 0;
@@ -457,6 +534,8 @@ export const Scene3D = ({
   const baseShapeSolid = useMemo(() => {
     if (selectedShape === 'circle') {
       return createCircleBaseShape(baseW, baseD, null);
+    } else if (selectedShape === 'house') {
+      return createHouseBaseShape(baseW, baseD, null);
     } else {
       return createRoundedRectShape(
         baseW, 
@@ -468,9 +547,11 @@ export const Scene3D = ({
   }, [selectedShape, baseW, baseD]);
 
   const baseShapeWithHole = useMemo(() => {
-    const holeConfig = { x: 0, y: 0, r: 4.2 }; // 8.4mm hole for 8mm threaded pin
+    const holeConfig = { x: 0, y: selectedShape === 'house' ? rectCenterY : 0, r: 4.2 }; // 8.4mm hole for 8mm threaded pin
     if (selectedShape === 'circle') {
       return createCircleBaseShape(baseW, baseD, holeConfig);
+    } else if (selectedShape === 'house') {
+      return createHouseBaseShape(baseW, baseD, holeConfig);
     } else {
       return createRoundedRectShape(
         baseW, 
@@ -479,17 +560,21 @@ export const Scene3D = ({
         holeConfig
       );
     }
-  }, [selectedShape, baseW, baseD]);
+  }, [selectedShape, baseW, baseD, rectCenterY]);
 
   // Çerçeve için içi boş şekiller
   const rimFrameShape = useMemo(() => {
     const outer = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 1.0, baseD - 1.0)
-      : createRoundedRectShape(baseW - 1.0, baseD - 1.0, Math.min(5, baseW/2, baseD/2));
+      : (selectedShape === 'house'
+        ? createHouseBaseShape(baseW - 1.0, baseD - 1.0)
+        : createRoundedRectShape(baseW - 1.0, baseD - 1.0, Math.min(5, baseW/2, baseD/2)));
     
     const inner = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 3.0, baseD - 3.0)
-      : createRoundedRectShape(baseW - 3.0, baseD - 3.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1));
+      : (selectedShape === 'house'
+        ? createHouseBaseShape(baseW - 3.0, baseD - 3.0)
+        : createRoundedRectShape(baseW - 3.0, baseD - 3.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1)));
     
     const frame = outer.clone();
     frame.holes.push(new THREE.Path().setFromPoints(inner.getPoints(128)));
@@ -500,17 +585,25 @@ export const Scene3D = ({
     // Daha kalın ve belirgin iki halka
     const outer1 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 1.0, baseD - 1.0)
-      : createRoundedRectShape(baseW - 1.0, baseD - 1.0, Math.min(5, baseW/2, baseD/2));
+      : (selectedShape === 'house'
+        ? createHouseBaseShape(baseW - 1.0, baseD - 1.0)
+        : createRoundedRectShape(baseW - 1.0, baseD - 1.0, Math.min(5, baseW/2, baseD/2)));
     const inner1 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 2.5, baseD - 2.5)
-      : createRoundedRectShape(baseW - 2.5, baseD - 2.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 0.7));
+      : (selectedShape === 'house'
+        ? createHouseBaseShape(baseW - 2.5, baseD - 2.5)
+        : createRoundedRectShape(baseW - 2.5, baseD - 2.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 0.7)));
     
     const outer2 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 4.5, baseD - 4.5)
-      : createRoundedRectShape(baseW - 4.5, baseD - 4.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1.5));
+      : (selectedShape === 'house'
+        ? createHouseBaseShape(baseW - 4.5, baseD - 4.5)
+        : createRoundedRectShape(baseW - 4.5, baseD - 4.5, Math.max(0, Math.min(5, baseW/2, baseD/2) - 1.5)));
     const inner2 = selectedShape === 'circle'
       ? createCircleBaseShape(baseW - 6.0, baseD - 6.0)
-      : createRoundedRectShape(baseW - 6.0, baseD - 6.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2.2));
+      : (selectedShape === 'house'
+        ? createHouseBaseShape(baseW - 6.0, baseD - 6.0)
+        : createRoundedRectShape(baseW - 6.0, baseD - 6.0, Math.max(0, Math.min(5, baseW/2, baseD/2) - 2.2)));
 
     const frame = outer1.clone();
     frame.holes.push(new THREE.Path().setFromPoints(inner1.getPoints(128)));
@@ -774,7 +867,11 @@ export const Scene3D = ({
 
           {/* TUTAMAK (HANDLE) - PROFESYONEL VINTAGE SAP */}
           {hasHandle && (
-            <group name="HandleGroup" position={[baseCenterX, 0, baseCenterZ]} rotation={[Math.PI, 0, 0]}>
+            <group 
+              name="HandleGroup" 
+              position={[baseCenterX, 0, selectedShape === 'house' ? baseCenterZ - rectCenterY : baseCenterZ]} 
+              rotation={[Math.PI, 0, 0]}
+            >
               <mesh>
                 <latheGeometry args={[handlePoints, 32]} />
                 <meshStandardMaterial color={handleColor || '#334155'} roughness={0.6} metalness={0.2} />
