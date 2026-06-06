@@ -5,6 +5,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { createIconShape } from '../../utils/svgIcons';
 import { createContourBaseShape } from '../../utils/contourUtils';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader';
+import ClipperLib from 'clipper-lib';
 
 const SCALE = 0.05;
 
@@ -136,77 +137,88 @@ const createCircleBaseShape = (width, depth, holeConfig) => {
   return shape;
 };
 
-// Ev (House) taban şekli - Hassas parametrik çizim (Saçaklar ve baca ile)
+// Ev (House) taban şekli - Hassas parametrik çizim (Saçaklar ve baca ile), ClipperLib ile hatasız iç içe offset desteği
 const createHouseBaseShape = (width, depth, holeConfig, inset = 0, isCW = false) => {
-  const shape = new THREE.Shape();
   const w = width;
   const d = depth;
   
-  // Evin sınırları
-  const wallLeft = -w * 0.4 + inset;
-  const wallRight = w * 0.4 - inset;
-  const bottom = -d * 0.45 + inset;
-  const wallTop = d * 0.05 + inset;
+  // Evin temel sınırları (offset = 0)
+  const wallLeft = -w * 0.4;
+  const wallRight = w * 0.4;
+  const bottom = -d * 0.45;
+  const wallTop = d * 0.05;
   
-  // Saçak kısımları için inset ötelemeleri
-  const overhangTipLeft = -w * 0.48 + inset * 1.2;
-  const overhangTipRight = w * 0.48 - inset * 1.2;
-  const overhangBottomY = d * 0.09 + inset;
+  // Saçak kısımları koordinatları
+  const overhangTipLeft = -w * 0.48;
+  const overhangTipRight = w * 0.48;
+  const overhangBottomY = d * 0.09;
   
   // Çatı zirvesi (peak)
-  const peakY = d * 0.46 - inset * 1.4;
+  const peakY = d * 0.46;
   const peakX = 0;
   
   // Baca koordinatları (Sağ tarafta)
-  const chimneyLeft = w * 0.18 + inset;
-  const chimneyRight = w * 0.36 - inset;
-  const chimneyTop = d * 0.42 - inset;
+  const chimneyLeft = w * 0.18;
+  const chimneyRight = w * 0.36;
+  const chimneyTop = d * 0.42;
   
-  // Çatı eğim çizgisi formülü: y = peakY + slope * x
-  // peak'ten sağ saçak ucuna eğim (slope):
-  // m = (overhangBottomY - peakY) / (overhangTipRight - peakX)
+  // Çatı eğim çizgisi formülü
   const slope = (overhangBottomY - peakY) / (overhangTipRight - peakX);
   const getRoofY = (x) => peakY + slope * x;
   
   const chimneyLeftRoofY = getRoofY(chimneyLeft);
   const chimneyRightRoofY = getRoofY(chimneyRight);
   
-  // Orijinal referans değerleri (Saçak alt çizgisi için sabit orantı)
   const wallRightOriginal = w * 0.4;
   const wallTopOriginal = d * 0.05;
   
-  if (isCW) {
-    // Saat Yönünde (CW) Çizim - Delikler (Holes) için
-    shape.moveTo(wallLeft, bottom);
-    shape.lineTo(wallLeft, wallTop);
-    shape.lineTo(-wallRightOriginal * 1.05 + inset * 1.1, wallTopOriginal + d * 0.02 + inset);
-    shape.lineTo(overhangTipLeft, overhangBottomY);
-    shape.lineTo(peakX, peakY);
-    shape.lineTo(chimneyLeft, chimneyLeftRoofY);
-    shape.lineTo(chimneyLeft, chimneyTop);
-    shape.lineTo(chimneyRight, chimneyTop);
-    shape.lineTo(chimneyRight, chimneyRightRoofY);
-    shape.lineTo(overhangTipRight, overhangBottomY);
-    shape.lineTo(wallRightOriginal * 1.05 - inset * 1.1, wallTopOriginal + d * 0.02 + inset);
-    shape.lineTo(wallRight, wallTop);
-    shape.lineTo(wallRight, bottom);
-  } else {
-    // Saat Yönünün Tersine (CCW) Çizim - Katı Şekiller (Solid Shapes) için
-    shape.moveTo(wallLeft, bottom);
-    shape.lineTo(wallRight, bottom);
-    shape.lineTo(wallRight, wallTop);
-    shape.lineTo(wallRightOriginal * 1.05 - inset * 1.1, wallTopOriginal + d * 0.02 + inset);
-    shape.lineTo(overhangTipRight, overhangBottomY);
-    shape.lineTo(chimneyRight, chimneyRightRoofY);
-    shape.lineTo(chimneyRight, chimneyTop);
-    shape.lineTo(chimneyLeft, chimneyTop);
-    shape.lineTo(chimneyLeft, chimneyLeftRoofY);
-    shape.lineTo(peakX, peakY);
-    shape.lineTo(overhangTipLeft, overhangBottomY);
-    shape.lineTo(-wallRightOriginal * 1.05 + inset * 1.1, wallTopOriginal + d * 0.02 + inset);
-    shape.lineTo(wallLeft, wallTop);
+  // Ana şekil noktaları (Saat yönünün tersi - CCW)
+  const rawPts = [
+    new THREE.Vector2(wallLeft, bottom),
+    new THREE.Vector2(wallRight, bottom),
+    new THREE.Vector2(wallRight, wallTop),
+    new THREE.Vector2(wallRightOriginal * 1.05, wallTopOriginal + d * 0.02),
+    new THREE.Vector2(overhangTipRight, overhangBottomY),
+    new THREE.Vector2(chimneyRight, chimneyRightRoofY),
+    new THREE.Vector2(chimneyRight, chimneyTop),
+    new THREE.Vector2(chimneyLeft, chimneyTop),
+    new THREE.Vector2(chimneyLeft, chimneyLeftRoofY),
+    new THREE.Vector2(peakX, peakY),
+    new THREE.Vector2(overhangTipLeft, overhangBottomY),
+    new THREE.Vector2(-wallRightOriginal * 1.05, wallTopOriginal + d * 0.02),
+    new THREE.Vector2(wallLeft, wallTop)
+  ];
+  
+  let pts = rawPts;
+  if (inset !== 0) {
+    const scale = 1000;
+    const clipperPath = rawPts.map(p => ({ X: Math.round(p.x * scale), Y: Math.round(p.y * scale) }));
+    
+    // Doğru yönü garanti et (Dış çerçeve için CCW)
+    if (ClipperLib.Clipper.Orientation(clipperPath)) {
+      clipperPath.reverse();
+    }
+    
+    const co = new ClipperLib.ClipperOffset();
+    co.AddPath(clipperPath, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon);
+    
+    const solution = new ClipperLib.Paths();
+    co.Execute(solution, -inset * scale);
+    
+    if (solution.length > 0) {
+      pts = solution[0].map(p => new THREE.Vector2(p.X / scale, p.Y / scale));
+    }
   }
   
+  if (isCW) {
+    pts.reverse();
+  }
+  
+  const shape = new THREE.Shape();
+  pts.forEach((p, i) => {
+    if (i === 0) shape.moveTo(p.x, p.y);
+    else shape.lineTo(p.x, p.y);
+  });
   shape.closePath();
   
   // Delik (Hole)
@@ -218,6 +230,7 @@ const createHouseBaseShape = (width, depth, holeConfig, inset = 0, isCW = false)
   
   return shape;
 };
+
 
 export const Scene3D = ({
   text,
